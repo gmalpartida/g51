@@ -1,0 +1,10 @@
+.globl sys_putc
+.globl sys_getc
+.globl sys_puts
+.globl sys_gets
+.globl sys_puts_xram
+.globl sys_init
+.globl sys_serial_isr
+.globl sys_clrscrn
+.globl sys_reset
+.globl sys_rand

@@ -1,0 +1,1133 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "commands.inc"
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      2 
+                                      3 .globl do_help
+                                      4 
+                                      5 .globl do_ls
+                                      6 
+                                      7 .globl do_peek
+                                      8 
+                                      9 .globl do_poke
+                                     10 
+                                     11 .globl do_dump
+                                     12 
+                                     13 .globl do_clear
+                                     14 
+                                     15 ; fills a memory block with a specific byte
+                                     16 .globl do_fill
+                                     17 
+                                     18 ; copies a memory block from one location to another
+                                     19 .globl do_copy
+                                     20 ; jumps to a memory address in program memory
+                                     21 ; --> r6, r7: memmory address in program memory
+                                     22 .globl do_goto
+                                     23 
+                                     24 .globl do_iram
+                                     25 
+                                     26 .globl do_sfr
+                                     27 
+                                     28 .globl do_write
+                                     29 
+                                     30 .globl do_invalid
+                                     31 
+                                     32 .globl do_load
+                                     33 
+                                     34 .globl do_reset
+                                     35 
+                                     36 .globl do_test_goto
+                                     37 
+                                     38 .globl do_test_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "conio.inc"
+                                      1 
+                                      2 .globl get_hex_address
+                                      3 
+                                      4 .globl skip_blanks
+                                      5 
+                                      6 .globl println
+                                      7 
+                                      8 ; prints tab
+                                      9 .globl printtab
+                                     10 
+                                     11 ; prints space
+                                     12 .globl printspc
+                                     13 
+                                     14 .globl ahex2word
+                                     15 
+                                     16 .globl ahex2byte
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 5
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 6
+Hexadecimal [24-Bits]
+
+
+
+                                      4 .include "ascii.inc"
+                                      1 ; Function: asc2bin
+                                      2 ; Input:  Accumulator (A) = ASCII character ('0'-'9', 'A'-'F')
+                                      3 ; Output: Accumulator (A) = Binary value (00h-0Fh)
+                                      4 ; Uses:   R0 (temporary storage)
+                                      5 .globl asc2nibble
+                                      6 
+                                      7 ; converts a binary value to an ascii character
+                                      8 ; --> a: binary value to be converted
+                                      9 ; <-- a: ascii character 
+                                     10 .globl nibble2asc
+                                     11 
+                                     12 ; converts a hex value to ascii
+                                     13 ; --> a: hex value
+                                     14 ; <-- b: ascii equivalent of upper nibble
+                                     15 ; <-- a: ascii equivalent of lower nibble
+                                     16 .globl hex2asc
+                                     17 
+                                     18 .globl asc2byte
+                                     19 
+                                     20 .globl byte2asc
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 7
+Hexadecimal [24-Bits]
+
+
+
+                                      5 .include "string.inc"
+                                      1 ; finds character c in the first n bytes of a memory buffer in program memory
+                                      2 ; --> r6,r7: address of memory buffer
+                                      3 ; --> r5: 	character for which to search
+                                      4 ; --> r4:	how many bytes at which to look
+                                      5 ; <-- r6,r7: address at which character was found, otherwise NULL
+                                      6 ; <-- c: clear if found, otherwise set
+                                      7 .globl memchr_c
+                                      8 
+                                      9 ; finds character c in the first n bytes of a memory buffer in data memory
+                                     10 ; --> r6,r7: address of memory buffer
+                                     11 ; --> r5: 	character for which to search
+                                     12 ; --> r4:	how many bytes at which to look
+                                     13 ; <-- r6,r7: address at which character was found, otherwise NULL
+                                     14 .globl memchr
+                                     15 
+                                     16 ; compares the first n bytes of two blocks of memory, one of which is in program memory
+                                     17 ; --> r6, r7: 	address of block of memory in program memory
+                                     18 ; --> r4, r5: 	address of block of memory in data memory
+                                     19 ; --> r3: 		how many bytes to compare
+                                     20 ; <-- r7:		0 if equal, -1 if first block is less than second block, otherwise 1
+                                     21 
+                                     22 .globl memcmp_c
+                                     23 
+                                     24 ; copies n bytes from one memory block to another, one of which resides in program memory
+                                     25 ; --> r6, r7: address of source memory block in program memory
+                                     26 ; --> r4, r5: address of destination memory block in data memory
+                                     27 ; --> r3: 	  how many bytes to copy
+                                     28 
+                                     29 .globl memcpy_c
+                                     30 
+                                     31 ; initializes a memory block with a specific byte
+                                     32 ; --> r6, r7: address of memory block
+                                     33 ; --> r5: length of memory block
+                                     34 ; --> r4: byte to fill the block
+                                     35 
+                                     36 .globl memset
+                                     37 
+                                     38 ; moves a memory block from one location to another
+                                     39 ; --> r6, r7: address of source memory block
+                                     40 ; --> r4, r5: address of destination memory block
+                                     41 ; --> r3: how many bytes to move
+                                     42 .globl memcpy
+                                     43 
+                                     44 .globl strncmp
+                                     45 
+                                     46 .globl strcmp
+                                     47 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 8
+Hexadecimal [24-Bits]
+
+
+
+                                      6 .include "vt102.inc"
+                                      1 
+                           00001B     2 VT102_ESC			.equ		0x1b
+                                      3 
+                                      4 .globl vt102_clear_screen
+                                      5 
+                                      6 ; draws a line from the current position to a destination
+                                      7 ; --> r7: row of end of line
+                                      8 ; --> r6: col of end of line
+                                      9 .globl vt102_line_to
+                                     10 
+                                     11 .globl vt102_send_bs
+                                     12 
+                                     13 .globl vt102_send_spc
+                                     14 
+                                     15 .globl vt102_handle_BS
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 9
+Hexadecimal [24-Bits]
+
+
+
+                                      7 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 10
+Hexadecimal [24-Bits]
+
+
+
+                                      8 .include "cmd_line_parser.inc"
+                                      1 
+                                      2 .globl cmd_line_parser_load
+                                      3 
+                                      4 .globl cmd_line_parser_next_token
+                                      5 
+                                      6 
+                                      7 
+                                      8 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 11
+Hexadecimal [24-Bits]
+
+
+
+                                      9 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 12
+Hexadecimal [24-Bits]
+
+
+
+                                     10 .include "uart.inc"
+                                      1 .globl uart_init
+                                      2 
+                                      3 ; receives a character via serial line
+                                      4 ; ==> none
+                                      5 ; <== a: character received
+                                      6 .globl uart_rx_char
+                                      7 
+                                      8 ; sends a character via serial line
+                                      9 ; ==> a:	character to send
+                                     10 ; <== none
+                                     11 .globl uart_tx_char
+                                     12 
+                                     13 ; sends an null-terminated string via serial line
+                                     14 ; ==> dptr: address of string
+                                     15 ; <== none
+                                     16 .globl uart_tx_asciz
+                                     17 
+                                     18 ; receives a null-terminated string via serial line
+                                     19 ; ==> none
+                                     20 ; <== dptr: address of received string
+                                     21 .globl uart_rx_asciz
+                                     22 
+                                     23 .globl uart_rx_isr
+                                     24 
+                                     25 .globl return_uart_rx_buffer
+                                     26 
+                                     27 .globl uart_rx_buffer_size
+                                     28 
+                                     29 .globl uart_tx_asciz_xram
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 13
+Hexadecimal [24-Bits]
+
+
+
+                                     11 ;.include "math.inc"
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 14
+Hexadecimal [24-Bits]
+
+
+
+                                     12 .include "sfr.inc"
+                                      1 .globl print_sfr_table
+                                      2 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 15
+Hexadecimal [24-Bits]
+
+
+
+                                     13 
+                                     14 .area CSEG (CODE)
+                                     15 
+      000000                         16 do_help:
+      000000 12 00 00         [24]   17 	lcall println
+      000003 90 00 20         [24]   18 	mov dptr, #cmd_line_input_temp
+      000006 12 00 00         [24]   19 	lcall cmd_line_parser_next_token
+      000009 C5 F0            [12]   20 	xch a, b
+      00000B 70 48            [24]   21 	jnz do_help_err
+      00000D 90 00 00         [24]   22 	mov dptr, #help_table
+      000010                         23 do_help_loop:
+      000010 E4               [12]   24 	clr a
+      000011 93               [24]   25 	movc a, @a + dptr		; high byte of command
+      000012 FF               [12]   26 	mov r7, a				
+      000013 74 01            [12]   27 	mov a, #1
+      000015 93               [24]   28 	movc a, @a + dptr		; low byte of command
+      000016 FE               [12]   29 	mov r6, a
+      000017 4F               [12]   30 	orl a, r7
+      000018 60 3E            [24]   31 	jz do_help_exit
+      00001A 74 09            [12]   32 	mov a, #TAB
+      00001C 12 00 00         [24]   33 	lcall sys_putc
+      00001F C0 83            [24]   34 	push dph				; save table pointer
+      000021 C0 82            [24]   35 	push dpl
+      000023 8F 83            [24]   36 	mov dph, r7				; get address of command
+      000025 8E 82            [24]   37 	mov dpl, r6
+      000027 12 00 00         [24]   38 	lcall sys_puts; send command to uart
+      00002A 74 09            [12]   39 	mov a, #TAB
+      00002C 12 00 00         [24]   40 	lcall sys_putc
+      00002F 12 00 00         [24]   41 	lcall sys_putc
+      000032 D0 82            [24]   42 	pop dpl
+      000034 D0 83            [24]   43 	pop dph
+      000036 A3               [24]   44 	inc dptr				; advance to command description
+      000037 A3               [24]   45 	inc dptr
+      000038 E4               [12]   46 	clr a
+      000039 93               [24]   47 	movc a, @a + dptr
+      00003A FF               [12]   48 	mov r7, a
+      00003B 74 01            [12]   49 	mov a, #1
+      00003D 93               [24]   50 	movc a, @a + dptr
+      00003E FE               [12]   51 	mov r6, a
+      00003F C0 83            [24]   52 	push dph
+      000041 C0 82            [24]   53 	push dpl
+      000043 8F 83            [24]   54 	mov dph, r7
+      000045 8E 82            [24]   55 	mov dpl, r6
+      000047 12 00 00         [24]   56 	lcall sys_puts
+      00004A 12 00 00         [24]   57 	lcall println
+      00004D D0 82            [24]   58 	pop dpl					; restore table pointer
+      00004F D0 83            [24]   59 	pop dph
+      000051 A3               [24]   60 	inc dptr				; advance to next record in table
+      000052 A3               [24]   61 	inc dptr
+      000053 80 BB            [24]   62 	sjmp do_help_loop
+      000055                         63 do_help_err:
+      000055 12 03 9D         [24]   64 	lcall do_invalid
+      000058                         65 do_help_exit:
+      000058 22               [24]   66 	ret
+                                     67 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 16
+Hexadecimal [24-Bits]
+
+
+
+      000059                         68 do_ls:
+      000059 12 00 00         [24]   69 	lcall println
+      00005C 90 00 20         [24]   70 	mov dptr, #cmd_line_input_temp
+      00005F 12 00 00         [24]   71 	lcall cmd_line_parser_next_token
+      000062 C5 F0            [12]   72 	xch a, b
+      000064 70 4A            [24]   73 	jnz do_ls_err
+      000066 90 00 00         [24]   74 	mov dptr, #app_table
+      000069                         75 do_ls_loop:
+      000069 E4               [12]   76 	clr a
+      00006A 93               [24]   77 	movc a, @a + dptr		; high byte of app_name
+      00006B FF               [12]   78 	mov r7, a				
+      00006C 74 01            [12]   79 	mov a, #1
+      00006E 93               [24]   80 	movc a, @a + dptr		; low byte of app_name
+      00006F FE               [12]   81 	mov r6, a
+      000070 4F               [12]   82 	orl a, r7
+      000071 60 40            [24]   83 	jz do_ls_exit
+      000073 74 09            [12]   84 	mov a, #TAB
+      000075 12 00 00         [24]   85 	lcall sys_putc
+      000078 C0 83            [24]   86 	push dph				; save table pointer
+      00007A C0 82            [24]   87 	push dpl
+      00007C 8F 83            [24]   88 	mov dph, r7				; get address of app_name
+      00007E 8E 82            [24]   89 	mov dpl, r6
+      000080 12 00 00         [24]   90 	lcall sys_puts		; send app_name to uart
+      000083 74 09            [12]   91 	mov a, #TAB
+      000085 12 00 00         [24]   92 	lcall sys_putc
+      000088 12 00 00         [24]   93 	lcall sys_putc
+      00008B D0 82            [24]   94 	pop dpl
+      00008D D0 83            [24]   95 	pop dph
+      00008F A3               [24]   96 	inc dptr				; advance to app description
+      000090 A3               [24]   97 	inc dptr
+      000091 E4               [12]   98 	clr a
+      000092 93               [24]   99 	movc a, @a + dptr
+      000093 FF               [12]  100 	mov r7, a
+      000094 74 01            [12]  101 	mov a, #1
+      000096 93               [24]  102 	movc a, @a + dptr
+      000097 FE               [12]  103 	mov r6, a
+      000098 C0 83            [24]  104 	push dph
+      00009A C0 82            [24]  105 	push dpl
+      00009C 8F 83            [24]  106 	mov dph, r7
+      00009E 8E 82            [24]  107 	mov dpl, r6
+      0000A0 12 00 00         [24]  108 	lcall sys_puts
+      0000A3 12 00 00         [24]  109 	lcall println
+      0000A6 D0 82            [24]  110 	pop dpl					; restore table pointer
+      0000A8 D0 83            [24]  111 	pop dph
+      0000AA A3               [24]  112 	inc dptr				; advance to next record in table
+      0000AB A3               [24]  113 	inc dptr
+      0000AC A3               [24]  114 	inc dptr
+      0000AD A3               [24]  115 	inc dptr
+      0000AE 80 B9            [24]  116 	sjmp do_ls_loop
+      0000B0                        117 do_ls_err:
+      0000B0 12 03 9D         [24]  118 	lcall do_invalid
+      0000B3                        119 do_ls_exit:
+      0000B3 22               [24]  120 	ret
+                                    121 
+      0000B4                        122 do_reset:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 17
+Hexadecimal [24-Bits]
+
+
+
+      0000B4 90 00 20         [24]  123 	mov dptr, #cmd_line_input_temp
+      0000B7 12 00 00         [24]  124 	lcall cmd_line_parser_next_token
+      0000BA C5 F0            [12]  125 	xch a, b
+      0000BC 70 03            [24]  126 	jnz do_reset_err
+      0000BE 12 00 00         [24]  127 	lcall sys_reset
+      0000C1                        128 do_reset_err:
+      0000C1 12 03 9D         [24]  129 	lcall do_invalid
+      0000C4 22               [24]  130 	ret
+                                    131 
+      0000C5                        132 do_peek:
+      0000C5 12 00 00         [24]  133 	lcall println
+                                    134 
+      0000C8 90 00 00         [24]  135 	mov dptr, #hex_word
+      0000CB 12 00 00         [24]  136 	lcall cmd_line_parser_next_token		; get hex address
+      0000CE 90 00 20         [24]  137 	mov dptr, #cmd_line_input_temp
+      0000D1 12 00 00         [24]  138 	lcall cmd_line_parser_next_token		; read any trailing garbage
+      0000D4 C5 F0            [12]  139 	xch a, b								; check token length <> 0
+      0000D6 70 2B            [24]  140 	jnz do_peek_err							; if any trailing garbage read then invalid command
+                                    141 
+      0000D8 90 00 00         [24]  142 	mov dptr, #hex_word
+      0000DB 12 00 00         [24]  143 	lcall sys_puts_xram
+      0000DE 74 3A            [12]  144 	mov a, #':'
+      0000E0 12 00 00         [24]  145 	lcall sys_putc
+      0000E3 74 20            [12]  146 	mov a, #' '
+      0000E5 12 00 00         [24]  147 	lcall sys_putc
+                                    148 
+      0000E8 90 00 00         [24]  149 	mov dptr, #hex_word
+      0000EB 12 00 00         [24]  150 	lcall ahex2word							; convert to binary
+                                    151 	
+      0000EE 85 F0 83         [24]  152 	mov dph, b
+      0000F1 F5 82            [12]  153 	mov dpl, a
+      0000F3 E0               [24]  154 	movx a, @dptr
+                                    155 
+      0000F4 12 00 00         [24]  156 	lcall hex2asc
+                                    157 
+      0000F7 F8               [12]  158 	mov R0, a
+      0000F8 E5 F0            [12]  159 	mov a, b
+      0000FA 12 00 00         [24]  160 	lcall sys_putc
+      0000FD E8               [12]  161 	mov a, R0
+      0000FE 12 00 00         [24]  162 	lcall sys_putc
+      000101 80 03            [24]  163 	sjmp do_peek_exit
+      000103                        164 do_peek_err:
+      000103 12 03 9D         [24]  165 	lcall do_invalid	
+      000106                        166 do_peek_exit:
+      000106 12 00 00         [24]  167 	lcall println
+      000109 22               [24]  168 	ret
+                                    169 
+      00010A                        170 do_poke:
+      00010A 12 00 00         [24]  171 	lcall println
+                                    172 
+      00010D 90 00 00         [24]  173 	mov dptr, #hex_word
+      000110 12 00 00         [24]  174 	lcall cmd_line_parser_next_token			; get hex address
+      000113 C5 F0            [12]  175 	xch a, b
+      000115 60 2A            [24]  176 	jz do_poke_invalid
+                                    177 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 18
+Hexadecimal [24-Bits]
+
+
+
+      000117 90 00 00         [24]  178 	mov dptr, #hex_word
+      00011A 12 00 00         [24]  179 	lcall ahex2word
+      00011D C0 E0            [24]  180 	push a
+      00011F C0 F0            [24]  181 	push 0xf0
+      000121 78 00            [12]  182 	mov r0, #0x00
+                                    183 
+      000123                        184 do_poke_loop:
+      000123 90 00 10         [24]  185 	mov dptr, #hex_byte
+      000126 12 00 00         [24]  186 	lcall cmd_line_parser_next_token
+      000129 C5 F0            [12]  187 	xch a, b									; if length = 0, then exit
+      00012B 60 18            [24]  188 	jz do_poke_exit
+      00012D 78 01            [12]  189 	mov r0, #0x01
+                                    190 
+      00012F 90 00 10         [24]  191 	mov dptr, #hex_byte	
+      000132 12 00 00         [24]  192 	lcall ahex2byte
+                                    193 
+      000135 D0 83            [24]  194 	pop dph										; pop upper byte
+      000137 D0 82            [24]  195 	pop dpl										; pop lower byte
+      000139 F0               [24]  196 	movx @dptr, a
+      00013A A3               [24]  197 	inc dptr
+      00013B C0 82            [24]  198 	push dpl
+      00013D C0 83            [24]  199 	push dph
+                                    200 
+      00013F 80 E2            [24]  201 	sjmp do_poke_loop
+      000141                        202 do_poke_invalid:
+      000141 12 03 9D         [24]  203 	lcall do_invalid
+      000144 22               [24]  204 	ret
+      000145                        205 do_poke_exit:
+      000145 D0 E0            [24]  206 	pop a
+      000147 D0 E0            [24]  207 	pop a
+      000149 B8 01 F5         [24]  208 	cjne r0, #0x01, do_poke_invalid
+      00014C 22               [24]  209 	ret
+                                    210 
+      00014D                        211 do_dump:
+      00014D 12 00 00         [24]  212 	lcall println
+      000150 90 00 00         [24]  213 	mov dptr, #hex_word
+      000153 12 00 00         [24]  214 	lcall cmd_line_parser_next_token
+      000156 90 00 20         [24]  215 	mov dptr, #cmd_line_input_temp
+      000159 12 00 00         [24]  216 	lcall cmd_line_parser_next_token
+      00015C C5 F0            [12]  217 	xch a, b
+      00015E 70 5F            [24]  218 	jnz do_dump_err
+      000160 90 00 00         [24]  219 	mov dptr, #hex_word
+      000163 12 00 00         [24]  220 	lcall ahex2word								; address in b:a
+                                    221 
+      000166 85 F0 83         [24]  222 	mov dph, b
+      000169 F5 82            [12]  223 	mov dpl, a
+                                    224 
+      00016B 12 00 00         [24]  225 	lcall printtab
+      00016E 01 C3            [24]  226 	acall print_dump_header
+      000170 12 00 00         [24]  227 	lcall println
+                                    228 	
+      000173 79 10            [12]  229 	mov r1, #0x10
+      000175                        230 do_dump_loop:
+                                    231 	; print row address
+      000175 E5 83            [12]  232 	mov a, dph
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 19
+Hexadecimal [24-Bits]
+
+
+
+      000177 12 00 00         [24]  233 	lcall hex2asc
+                                    234 
+      00017A C5 F0            [12]  235 	xch a, b
+      00017C 12 00 00         [24]  236 	lcall sys_putc
+      00017F C5 F0            [12]  237 	xch a, b
+      000181 12 00 00         [24]  238 	lcall sys_putc
+                                    239 
+      000184 E5 82            [12]  240 	mov a, dpl
+      000186 12 00 00         [24]  241 	lcall hex2asc
+      000189 C5 F0            [12]  242 	xch a, b
+      00018B 12 00 00         [24]  243 	lcall sys_putc
+      00018E C5 F0            [12]  244 	xch a, b
+      000190 12 00 00         [24]  245 	lcall sys_putc
+      000193 12 00 00         [24]  246 	lcall printspc
+      000196 12 00 00         [24]  247 	lcall printspc
+      000199 12 00 00         [24]  248 	lcall printspc
+      00019C 12 00 00         [24]  249 	lcall printspc
+                                    250 	
+      00019F 78 10            [12]  251 	mov r0, #0x10
+      0001A1                        252 row_data_loop:
+      0001A1 E0               [24]  253 	movx a, @dptr
+      0001A2 12 00 00         [24]  254 	lcall hex2asc
+      0001A5 C5 F0            [12]  255 	xch a, b
+      0001A7 12 00 00         [24]  256 	lcall sys_putc
+      0001AA C5 F0            [12]  257 	xch a, b
+      0001AC 12 00 00         [24]  258 	lcall sys_putc
+      0001AF 12 00 00         [24]  259 	lcall printspc
+      0001B2 12 00 00         [24]  260 	lcall printspc
+      0001B5 A3               [24]  261 	inc dptr
+      0001B6 D8 E9            [24]  262 	djnz r0, row_data_loop
+      0001B8 12 00 00         [24]  263 	lcall println
+      0001BB D9 B8            [24]  264 	djnz r1, do_dump_loop
+      0001BD 80 03            [24]  265 	sjmp do_dump_exit
+      0001BF                        266 do_dump_err:
+      0001BF 12 03 9D         [24]  267 	lcall do_invalid
+      0001C2                        268 do_dump_exit:
+      0001C2 22               [24]  269 	ret
+                                    270 
+      0001C3                        271 print_dump_header:
+      0001C3 7C FF            [12]  272 	mov r4, #0xff
+      0001C5 7B 10            [12]  273 	mov r3, #0x10
+      0001C7                        274 print_dump_header_loop:
+      0001C7 0C               [12]  275 	inc r4
+      0001C8 74 30            [12]  276 	mov a, #'0'
+      0001CA 12 00 00         [24]  277 	lcall sys_putc
+      0001CD EC               [12]  278 	mov a, r4
+      0001CE 54 0F            [12]  279 	anl a, #0x0f
+      0001D0 12 00 00         [24]  280 	lcall nibble2asc
+      0001D3 12 00 00         [24]  281 	lcall sys_putc
+      0001D6 74 20            [12]  282 	mov a, #' '
+      0001D8 12 00 00         [24]  283 	lcall sys_putc
+      0001DB 74 20            [12]  284 	mov a, #' '
+      0001DD 12 00 00         [24]  285 	lcall sys_putc
+      0001E0 DB E5            [24]  286 	djnz r3, print_dump_header_loop
+                                    287 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 20
+Hexadecimal [24-Bits]
+
+
+
+      0001E2 22               [24]  288 	ret
+                                    289 
+                                    290 ; fills a memory block with a specific byte
+      0001E3                        291 do_fill:
+      0001E3 12 00 00         [24]  292 	lcall println
+      0001E6 90 00 00         [24]  293 	mov dptr, #hex_word
+      0001E9 12 00 00         [24]  294 	lcall cmd_line_parser_next_token			; read address
+      0001EC 90 00 00         [24]  295 	mov dptr, #hex_word
+      0001EF 12 00 00         [24]  296 	lcall ahex2word								; address in b:a
+      0001F2 C0 F0            [24]  297 	push 0xf0									; push b = high byte of address
+      0001F4 C0 E0            [24]  298 	push a										; push a = low byte of address
+                                    299 
+      0001F6 90 00 00         [24]  300 	mov dptr, #hex_word
+      0001F9 12 00 00         [24]  301 	lcall cmd_line_parser_next_token			; read length
+      0001FC 90 00 00         [24]  302 	mov dptr, #hex_word
+      0001FF 12 00 00         [24]  303 	lcall ahex2word
+      000202 C0 F0            [24]  304 	push 0xf0									; push b = high byte of length
+      000204 C0 E0            [24]  305 	push a										; push a = low byte of length
+                                    306 
+      000206 90 00 10         [24]  307 	mov dptr, #hex_byte
+      000209 12 00 00         [24]  308 	lcall cmd_line_parser_next_token			; read fill char
+      00020C 90 00 10         [24]  309 	mov dptr, #hex_byte
+      00020F 12 00 00         [24]  310 	lcall ahex2byte
+      000212 C0 E0            [24]  311 	push a										; push a = fill char
+                                    312 
+      000214 90 00 20         [24]  313 	mov dptr, #cmd_line_input_temp				; check for trailing garbage
+      000217 12 00 00         [24]  314 	lcall cmd_line_parser_next_token
+      00021A C5 F0            [12]  315 	xch a, b
+      00021C 70 0F            [24]  316 	jnz do_fill_err
+                                    317 	
+      00021E D0 05            [24]  318 	pop 0x05									; pop fill char into R5
+                                    319 	
+      000220 D0 06            [24]  320 	pop 0x06									; pop low byte of length
+      000222 D0 07            [24]  321 	pop 0x07									; pop high byte of length
+                                    322 
+      000224 D0 82            [24]  323 	pop dpl										; pop low byte of address
+      000226 D0 83            [24]  324 	pop dph										; pop high byte of address
+                                    325 
+      000228 12 00 00         [24]  326 	lcall memset
+      00022B 80 0D            [24]  327 	sjmp do_fill_exit
+      00022D                        328 do_fill_err:
+      00022D D0 E0            [24]  329 	pop a										; cleanup stack if error
+      00022F D0 E0            [24]  330 	pop a
+      000231 D0 E0            [24]  331 	pop a
+      000233 D0 E0            [24]  332 	pop a
+      000235 D0 E0            [24]  333 	pop a
+      000237 12 03 9D         [24]  334 	lcall do_invalid
+      00023A                        335 do_fill_exit:
+      00023A 22               [24]  336 	ret
+                                    337 
+                                    338 ; copies a memory block from one location to another
+      00023B                        339 do_copy:
+      00023B 12 00 00         [24]  340 	lcall println
+                                    341 
+      00023E 90 00 00         [24]  342 	mov dptr, #hex_word
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 21
+Hexadecimal [24-Bits]
+
+
+
+      000241 12 00 00         [24]  343 	lcall cmd_line_parser_next_token
+      000244 90 00 00         [24]  344 	mov dptr, #hex_word
+      000247 12 00 00         [24]  345 	lcall ahex2word
+      00024A C0 F0            [24]  346 	push 0xf0
+      00024C C0 E0            [24]  347 	push a
+                                    348 
+      00024E 90 00 00         [24]  349 	mov dptr, #hex_word
+      000251 12 00 00         [24]  350 	lcall cmd_line_parser_next_token
+      000254 90 00 00         [24]  351 	mov dptr, #hex_word
+      000257 12 00 00         [24]  352 	lcall ahex2word
+      00025A C0 F0            [24]  353 	push 0xf0
+      00025C C0 E0            [24]  354 	push a
+                                    355 
+      00025E 90 00 00         [24]  356 	mov dptr, #hex_word
+      000261 12 00 00         [24]  357 	lcall cmd_line_parser_next_token
+      000264 90 00 20         [24]  358 	mov dptr, #cmd_line_input_temp
+      000267 12 00 00         [24]  359 	lcall cmd_line_parser_next_token
+      00026A C5 F0            [12]  360 	xch a, b
+      00026C 70 16            [24]  361 	jnz do_copy_err
+                                    362 
+      00026E 90 00 00         [24]  363 	mov dptr, #hex_word
+      000271 12 00 00         [24]  364 	lcall ahex2word
+      000274 AD F0            [24]  365 	mov R5, b
+      000276 FC               [12]  366 	mov R4, a
+      000277 D0 06            [24]  367 	pop 0x06
+      000279 D0 07            [24]  368 	pop 0x07
+      00027B D0 82            [24]  369 	pop dpl
+      00027D D0 83            [24]  370 	pop dph
+                                    371 
+      00027F 12 00 00         [24]  372 	lcall memcpy
+      000282 80 03            [24]  373 	sjmp do_copy_exit
+      000284                        374 do_copy_err:
+      000284 12 03 9D         [24]  375 	lcall do_invalid
+      000287                        376 do_copy_exit:
+      000287 22               [24]  377 	ret
+                                    378 
+                                    379 ; jumps to a memory address in program memory
+      000288                        380 do_goto:
+      000288 12 00 00         [24]  381 	lcall println
+      00028B 90 00 00         [24]  382 	mov dptr, #hex_word
+      00028E 12 00 00         [24]  383 	lcall cmd_line_parser_next_token
+      000291 90 00 20         [24]  384 	mov dptr, #cmd_line_input_temp
+      000294 12 00 00         [24]  385 	lcall cmd_line_parser_next_token
+      000297 C5 F0            [12]  386 	xch a, b
+      000299 70 0D            [24]  387 	jnz do_goto_err
+      00029B 90 00 00         [24]  388 	mov dptr, #hex_word
+      00029E 12 00 00         [24]  389 	lcall ahex2word
+                                    390 
+      0002A1 C0 E0            [24]  391 	push a
+      0002A3 C0 F0            [24]  392 	push 0xf0
+      0002A5 22               [24]  393 	ret
+                                    394 	
+      0002A6 80 03            [24]  395 	sjmp do_goto_exit
+                                    396 
+      0002A8                        397 do_goto_err:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 22
+Hexadecimal [24-Bits]
+
+
+
+      0002A8 12 03 9D         [24]  398 	lcall do_invalid
+      0002AB                        399 do_goto_exit:
+      0002AB 22               [24]  400 	ret
+                                    401 
+      0002AC                        402 do_iram:
+      0002AC 12 00 00         [24]  403 	lcall println
+      0002AF 90 00 20         [24]  404 	mov dptr, #cmd_line_input_temp
+      0002B2 12 00 00         [24]  405 	lcall cmd_line_parser_next_token
+      0002B5 C5 F0            [12]  406 	xch a, b
+      0002B7 70 57            [24]  407 	jnz do_iram_err
+                                    408 
+      0002B9 7F 01            [12]  409 	mov r7, #0x01
+      0002BB 12 00 00         [24]  410 	lcall printtab
+      0002BE 01 C3            [24]  411 	acall print_dump_header
+      0002C0 12 00 00         [24]  412 	lcall println
+      0002C3 7F 08            [12]  413 	mov r7, #0x08				; how many rows
+      0002C5 78 00            [12]  414 	mov r0, #0x00				; starting address
+      0002C7                        415 do_iram_row_loop:
+      0002C7 7E 10            [12]  416 	mov r6, #0x10				; how many columns
+      0002C9 E8               [12]  417 	mov a, r0
+      0002CA F5 F0            [12]  418 	mov b, a
+      0002CC C4               [12]  419 	swap a
+      0002CD 54 0F            [12]  420 	anl a, #0x0f
+      0002CF 12 00 00         [24]  421 	lcall nibble2asc
+      0002D2 12 00 00         [24]  422 	lcall sys_putc
+      0002D5 E5 F0            [12]  423 	mov a, b
+      0002D7 54 0F            [12]  424 	anl a, #0x0f
+      0002D9 12 00 00         [24]  425 	lcall nibble2asc
+      0002DC 12 00 00         [24]  426 	lcall sys_putc
+      0002DF C0 07            [24]  427 	push 0x07
+      0002E1 7F 01            [12]  428 	mov r7, #0x01
+      0002E3 12 00 00         [24]  429 	lcall printtab
+      0002E6 D0 07            [24]  430 	pop 0x07
+      0002E8                        431 do_iram_col_loop:
+      0002E8 E6               [12]  432 	mov a, @r0
+      0002E9 F5 F0            [12]  433 	mov b, a
+      0002EB C4               [12]  434 	swap a
+      0002EC 54 0F            [12]  435 	anl a, #0x0f
+      0002EE 12 00 00         [24]  436 	lcall nibble2asc
+      0002F1 12 00 00         [24]  437 	lcall sys_putc
+      0002F4 E5 F0            [12]  438 	mov a, b
+      0002F6 54 0F            [12]  439 	anl a, #0x0f
+      0002F8 12 00 00         [24]  440 	lcall nibble2asc
+      0002FB 12 00 00         [24]  441 	lcall sys_putc
+      0002FE 74 20            [12]  442 	mov a, #SPC
+      000300 12 00 00         [24]  443 	lcall sys_putc
+      000303 12 00 00         [24]  444 	lcall sys_putc
+      000306 08               [12]  445 	inc r0
+      000307 DE DF            [24]  446 	djnz r6, do_iram_col_loop
+      000309 12 00 00         [24]  447 	lcall println
+      00030C DF B9            [24]  448 	djnz r7, do_iram_row_loop
+      00030E 80 03            [24]  449 	sjmp do_iram_exit
+      000310                        450 do_iram_err:
+      000310 12 03 9D         [24]  451 	lcall do_invalid
+      000313                        452 do_iram_exit:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 23
+Hexadecimal [24-Bits]
+
+
+
+      000313 22               [24]  453 	ret
+                                    454 
+      000314                        455 do_sfr:
+      000314 12 00 00         [24]  456 	lcall println
+      000317 90 00 20         [24]  457 	mov dptr, #cmd_line_input_temp
+      00031A 12 00 00         [24]  458 	lcall cmd_line_parser_next_token
+      00031D C5 F0            [12]  459 	xch a, b
+      00031F 60 03            [24]  460 	jz do_sfr_no_err
+      000321 02 03 29         [24]  461 	ljmp do_sfr_err
+      000324                        462 do_sfr_no_err:
+      000324 12 00 00         [24]  463 	lcall print_sfr_table
+      000327 80 03            [24]  464 	sjmp do_sfr_exit
+      000329                        465 do_sfr_err:
+      000329 12 03 9D         [24]  466 	lcall do_invalid
+      00032C                        467 do_sfr_exit:
+      00032C 22               [24]  468 	ret
+                                    469 
+      00032D                        470 do_clear:
+      00032D 90 00 20         [24]  471 	mov dptr, #cmd_line_input_temp
+      000330 12 00 00         [24]  472 	lcall cmd_line_parser_next_token
+      000333 C5 F0            [12]  473 	xch a, b
+      000335 70 05            [24]  474 	jnz do_clear_err
+      000337 12 00 00         [24]  475 	lcall sys_clrscrn
+      00033A 80 03            [24]  476 	sjmp do_clear_exit
+      00033C                        477 do_clear_err:
+      00033C 12 03 9D         [24]  478 	lcall do_invalid
+      00033F                        479 do_clear_exit:
+      00033F 22               [24]  480 	ret
+                                    481 
+      000340                        482 do_write:
+      000340 12 00 00         [24]  483 	lcall println
+      000343 12 00 00         [24]  484 	lcall skip_blanks
+      000346 E6               [12]  485 	mov a, @r0
+      000347 B4 70 4F         [24]  486 	cjne a, #'p', do_write_error
+      00034A 08               [12]  487 	inc r0
+      00034B E6               [12]  488 	mov a, @r0
+      00034C 08               [12]  489 	inc r0
+      00034D B4 30 0A         [24]  490 	cjne a, #'0', do_write_not_0
+      000350 12 00 00         [24]  491 	lcall skip_blanks
+      000353 12 00 00         [24]  492 	lcall get_hex_address
+      000356 F5 80            [12]  493 	mov p0, a
+      000358 80 41            [24]  494 	sjmp do_write_exit
+      00035A                        495 do_write_not_0:
+      00035A B4 31 0A         [24]  496 	cjne a, #'1', do_write_not_1
+      00035D 12 00 00         [24]  497 	lcall skip_blanks
+      000360 12 00 00         [24]  498 	lcall get_hex_address
+      000363 F5 90            [12]  499 	mov p1, a
+      000365 80 34            [24]  500 	sjmp do_write_exit
+      000367                        501 do_write_not_1:
+      000367 B4 32 0A         [24]  502 	cjne a, #'2', do_write_not_2
+      00036A 12 00 00         [24]  503 	lcall skip_blanks
+      00036D 12 00 00         [24]  504 	lcall get_hex_address
+      000370 F5 A0            [12]  505 	mov p2, a
+      000372 80 27            [24]  506 	sjmp do_write_exit
+      000374                        507 do_write_not_2:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 24
+Hexadecimal [24-Bits]
+
+
+
+      000374 B4 33 0A         [24]  508 	cjne a, #'3', do_write_not_3
+      000377 12 00 00         [24]  509 	lcall skip_blanks
+      00037A 12 00 00         [24]  510 	lcall get_hex_address
+      00037D F5 B0            [12]  511 	mov p3, a
+      00037F 80 1A            [24]  512 	sjmp do_write_exit
+      000381                        513 do_write_not_3:
+      000381 B4 63 15         [24]  514 	cjne a, #'c', do_write_not_pcon
+      000384 08               [12]  515 	inc r0
+      000385 E6               [12]  516 	mov a, @r0
+      000386 B4 6F 10         [24]  517 	cjne a, #'o', do_write_error
+      000389 08               [12]  518 	inc r0
+      00038A E6               [12]  519 	mov a, @r0
+      00038B B4 6E 0B         [24]  520 	cjne a, #'n', do_write_error
+      00038E 08               [12]  521 	inc r0
+      00038F 12 00 00         [24]  522 	lcall skip_blanks
+      000392 12 00 00         [24]  523 	lcall get_hex_address
+      000395 F5 87            [12]  524 	mov pcon, a
+      000397 80 02            [24]  525 	sjmp do_write_exit
+      000399                        526 do_write_not_pcon:
+      000399                        527 do_write_error:
+      000399 D3               [12]  528 	setb c
+      00039A 22               [24]  529 	ret
+      00039B                        530 do_write_exit:
+      00039B C3               [12]  531 	clr c
+      00039C 22               [24]  532 	ret
+                                    533 
+      00039D                        534 do_invalid:
+      00039D 12 00 00         [24]  535 	lcall println
+      0003A0 90 00 00         [24]  536     mov dptr, #msg_err
+      0003A3 12 00 00         [24]  537     lcall sys_puts
+      0003A6 12 00 00         [24]  538 	lcall println
+      0003A9 22               [24]  539 	ret
+                                    540 
+      0003AA                        541 do_load:
+      0003AA 12 00 00         [24]  542 	lcall println
+      0003AD 90 00 00         [24]  543 	mov dptr, #hex_word
+      0003B0 12 00 00         [24]  544 	lcall cmd_line_parser_next_token
+      0003B3 90 00 20         [24]  545 	mov dptr, #cmd_line_input_temp
+      0003B6 12 00 00         [24]  546 	lcall cmd_line_parser_next_token
+      0003B9 C5 F0            [12]  547 	xch a, b
+      0003BB 60 03            [24]  548 	jz dl_no_err
+      0003BD 02 04 A3         [24]  549 	ljmp dl_err
+      0003C0                        550 dl_no_err:
+                                    551 
+      0003C0 90 00 00         [24]  552 	mov dptr, #hex_word
+      0003C3 E0               [24]  553 	movx a, @dptr
+      0003C4 C0 E0            [24]  554 	push a
+      0003C6 A3               [24]  555 	inc dptr
+      0003C7 E0               [24]  556 	movx a, @dptr
+      0003C8 D0 F0            [24]  557 	pop 0xf0
+      0003CA 12 00 00         [24]  558 	lcall asc2byte
+      0003CD A3               [24]  559 	inc dptr
+      0003CE C0 82            [24]  560 	push dpl
+      0003D0 C0 83            [24]  561 	push dph
+      0003D2 90 00 31         [24]  562 	mov dptr, #ihex_address
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 25
+Hexadecimal [24-Bits]
+
+
+
+      0003D5 F0               [24]  563 	movx @dptr, a
+      0003D6 D0 83            [24]  564 	pop dph
+      0003D8 D0 82            [24]  565 	pop dpl
+      0003DA E0               [24]  566 	movx a, @dptr
+      0003DB C0 E0            [24]  567 	push a
+      0003DD A3               [24]  568 	inc dptr
+      0003DE E0               [24]  569 	movx a, @dptr
+      0003DF D0 F0            [24]  570 	pop 0xf0
+      0003E1 12 00 00         [24]  571 	lcall asc2byte
+      0003E4 90 00 32         [24]  572 	mov dptr, #(ihex_address+1)
+      0003E7 F0               [24]  573 	movx @dptr, a
+      0003E8                        574 dl_loop:
+      0003E8 12 00 00         [24]  575 	lcall sys_getc
+      0003EB B4 3A FA         [24]  576 	cjne a, #':', dl_loop			; discard start of record character ':'
+      0003EE 90 00 33         [24]  577 	mov dptr, #ihex_checksum
+      0003F1 74 00            [12]  578 	mov a, #0x00
+      0003F3 F0               [24]  579 	movx @dptr, a
+      0003F4                        580 dl_record_length:					; read 2 ascii characters
+      0003F4 12 00 00         [24]  581 	lcall sys_getc					; read upper ascii nibble
+      0003F7 C0 E0            [24]  582 	push a							; backup upper nibble
+      0003F9 12 00 00         [24]  583 	lcall sys_getc					; read lower ascii nibble
+      0003FC D0 F0            [24]  584 	pop 0xf0						; restore into b
+      0003FE 12 00 00         [24]  585 	lcall asc2byte					; convert b:a to byte
+      000401 90 00 30         [24]  586 	mov dptr, #ihex_record_length	; save to ihex_byte_count
+      000404 F0               [24]  587 	movx @dptr, a
+      000405 12 04 AA         [24]  588 	lcall dl_add_to_checksum
+      000408                        589 dl_address:							; read 4 ascii characters
+      000408 12 00 00         [24]  590 	lcall sys_getc
+      00040B C0 E0            [24]  591 	push a
+      00040D 12 00 00         [24]  592 	lcall sys_getc
+      000410 D0 F0            [24]  593 	pop 0xf0
+      000412 12 00 00         [24]  594 	lcall asc2byte
+      000415 12 04 AA         [24]  595 	lcall dl_add_to_checksum
+      000418 12 00 00         [24]  596 	lcall sys_getc
+      00041B C0 E0            [24]  597 	push a
+      00041D 12 00 00         [24]  598 	lcall sys_getc
+      000420 D0 F0            [24]  599 	pop 0xf0
+      000422 12 00 00         [24]  600 	lcall asc2byte
+      000425 12 04 AA         [24]  601 	lcall dl_add_to_checksum
+      000428                        602 dl_record_type:						
+      000428 12 00 00         [24]  603 	lcall sys_getc					; read 2 ascii characters
+      00042B C0 E0            [24]  604 	push a
+      00042D 12 00 00         [24]  605 	lcall sys_getc
+      000430 D0 F0            [24]  606 	pop 0xf0
+      000432 12 00 00         [24]  607 	lcall asc2byte					; read record type
+      000435 12 04 AA         [24]  608 	lcall dl_add_to_checksum
+      000438 90 00 34         [24]  609 	mov dptr, #ihex_record_type
+      00043B F0               [24]  610 	movx @dptr, a
+                                    611 
+      00043C 90 00 30         [24]  612 	mov dptr, #ihex_record_length
+      00043F E0               [24]  613 	movx a, @dptr
+      000440 FF               [12]  614 	mov R7, a
+      000441 60 32            [24]  615 	jz dl_checksum
+      000443                        616 dl_payload_loop:					; read 2 ascii characters on each iteration
+      000443 12 00 00         [24]  617 	lcall sys_getc
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 26
+Hexadecimal [24-Bits]
+
+
+
+      000446 C0 E0            [24]  618 	push a
+      000448 12 00 00         [24]  619 	lcall sys_getc
+      00044B D0 F0            [24]  620 	pop 0xf0
+      00044D 12 00 00         [24]  621 	lcall asc2byte
+      000450 C0 E0            [24]  622 	push a							; save data byte
+      000452 90 00 31         [24]  623 	mov dptr, #ihex_address
+      000455 E0               [24]  624 	movx a, @dptr					; read high byte of destination address
+      000456 C0 E0            [24]  625 	push a
+      000458 A3               [24]  626 	inc dptr
+      000459 E0               [24]  627 	movx a, @dptr					; read low byte of destination address
+      00045A F5 82            [12]  628 	mov dpl, a
+      00045C D0 83            [24]  629 	pop dph							; dptr points to destination address
+      00045E D0 E0            [24]  630 	pop a							; restore data from stack
+      000460 F0               [24]  631 	movx @dptr, a					; write data to destination address
+      000461 12 04 AA         [24]  632 	lcall dl_add_to_checksum
+      000464 A3               [24]  633 	inc dptr
+      000465 C0 82            [24]  634 	push dpl
+      000467 C0 83            [24]  635 	push dph
+      000469 90 00 31         [24]  636 	mov dptr, #ihex_address
+      00046C D0 E0            [24]  637 	pop a
+      00046E F0               [24]  638 	movx @dptr, a
+      00046F A3               [24]  639 	inc dptr
+      000470 D0 E0            [24]  640 	pop a
+      000472 F0               [24]  641 	movx @dptr, a
+      000473 DF CE            [24]  642 	djnz R7, dl_payload_loop
+      000475                        643 dl_checksum:						; read 2 ascii characters
+      000475 12 00 00         [24]  644 	lcall sys_getc
+      000478 C0 E0            [24]  645 	push a
+      00047A 12 00 00         [24]  646 	lcall sys_getc
+      00047D D0 F0            [24]  647 	pop 0xf0
+      00047F 12 00 00         [24]  648 	lcall asc2byte
+      000482 12 04 AA         [24]  649 	lcall dl_add_to_checksum
+      000485 90 00 33         [24]  650 	mov dptr, #ihex_checksum
+      000488 E0               [24]  651 	movx a, @dptr
+      000489 70 07            [24]  652 	jnz dl_checksum_error			; a contains the total checksum
+                                    653 
+      00048B 74 2E            [12]  654 	mov a, #'.'
+      00048D 12 00 00         [24]  655 	lcall sys_putc
+      000490 80 05            [24]  656 	sjmp dl_check_eof
+      000492                        657 dl_checksum_error:
+      000492 74 78            [12]  658 	mov a, #'x'
+      000494 12 00 00         [24]  659 	lcall sys_putc
+      000497                        660 dl_check_eof:
+      000497 12 00 00         [24]  661 	lcall printspc
+      00049A 90 00 34         [24]  662 	mov dptr, #ihex_record_type
+      00049D E0               [24]  663 	movx a, @dptr
+      00049E 70 06            [24]  664 	jnz dl_exit
+      0004A0 02 03 E8         [24]  665 	ljmp dl_loop
+      0004A3                        666 dl_err:
+      0004A3 12 03 9D         [24]  667 	lcall do_invalid
+      0004A6                        668 dl_exit:
+      0004A6 12 00 00         [24]  669 	lcall println
+      0004A9 22               [24]  670 	ret
+                                    671 	
+      0004AA                        672 dl_add_to_checksum:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 27
+Hexadecimal [24-Bits]
+
+
+
+      0004AA C0 E0            [24]  673 	push a
+      0004AC C0 F0            [24]  674 	push 0xf0
+      0004AE C0 82            [24]  675 	push dpl
+      0004B0 C0 83            [24]  676 	push dph
+      0004B2 F5 F0            [12]  677 	mov b, a
+      0004B4 90 00 33         [24]  678 	mov dptr, #ihex_checksum
+      0004B7 E0               [24]  679 	movx a, @dptr
+      0004B8 25 F0            [12]  680 	add a, b
+      0004BA F0               [24]  681 	movx @dptr, a
+      0004BB D0 83            [24]  682 	pop dph
+      0004BD D0 82            [24]  683 	pop dpl
+      0004BF D0 F0            [24]  684 	pop 0xf0
+      0004C1 D0 E0            [24]  685 	pop a
+                                    686 
+      0004C3 22               [24]  687 	ret
+                                    688 
+      0004C4                        689 do_test_rand:
+      0004C4 12 00 00         [24]  690 	lcall println
+                                    691 
+      0004C7 78 55            [12]  692 	mov r0, #0x55
+      0004C9 79 10            [12]  693 	mov r1, #0x10
+      0004CB                        694 do_test_rand_loop:
+      0004CB 12 00 00         [24]  695 	lcall sys_rand
+                                    696 
+      0004CE C0 E0            [24]  697 	push a
+      0004D0 C5 F0            [12]  698 	xch a, b
+      0004D2 12 00 00         [24]  699 	lcall byte2asc
+      0004D5 C5 F0            [12]  700 	xch a, b
+      0004D7 12 00 00         [24]  701 	lcall sys_putc
+      0004DA C5 F0            [12]  702 	xch a, b
+      0004DC 12 00 00         [24]  703 	lcall sys_putc
+                                    704 
+      0004DF D0 E0            [24]  705 	pop a
+      0004E1 12 00 00         [24]  706 	lcall byte2asc
+      0004E4 C5 F0            [12]  707 	xch a, b
+      0004E6 12 00 00         [24]  708 	lcall sys_putc
+      0004E9 C5 F0            [12]  709 	xch a, b
+      0004EB 12 00 00         [24]  710 	lcall sys_putc
+                                    711 
+      0004EE D9 07            [24]  712 	djnz r1, do_spc
+      0004F0 12 00 00         [24]  713 	lcall println
+      0004F3 79 10            [12]  714 	mov r1, #0x10
+      0004F5 80 03            [24]  715 	sjmp do_next_number
+      0004F7                        716 do_spc:
+      0004F7 12 00 00         [24]  717 	lcall printspc
+                                    718 
+      0004FA                        719 do_next_number:
+      0004FA D8 CF            [24]  720 	djnz r0, do_test_rand_loop
+                                    721 
+      0004FC 22               [24]  722 	ret
+                                    723 
+      0004FD                        724 do_test_goto:
+      0004FD 85 08 83         [24]  725 	mov dph, 0x08
+      000500 85 A5 82         [24]  726 	mov dpl, 0xa5
+                                    727 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 28
+Hexadecimal [24-Bits]
+
+
+
+      000503 12 02 88         [24]  728 	lcall do_goto
+                                    729 
+      000506 22               [24]  730 	ret
+                                    731 
+                                    732 .area XSEG (XDATA)
+                                    733 
+      000000                        734 hex_word:				.ds			0x10
+      000010                        735 hex_byte:				.ds			0x10
+      000020                        736 cmd_line_input_temp:	.ds			0x10
+      000030                        737 ihex_record_length:		.ds			0x01
+      000031                        738 ihex_address:			.ds			0x02
+      000033                        739 ihex_checksum:			.ds			0x01
+      000034                        740 ihex_record_type:		.ds			0x01
+                                    741 
+                                    742 

@@ -1,0 +1,373 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "apps.inc"
+                                      1 .globl lcd_app
+                                      2 
+                                      3 .globl pwm_app
+                                      4 
+                                      5 .globl vt102_app
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      4 .include "ascii.inc"
+                                      1 ; Function: asc2bin
+                                      2 ; Input:  Accumulator (A) = ASCII character ('0'-'9', 'A'-'F')
+                                      3 ; Output: Accumulator (A) = Binary value (00h-0Fh)
+                                      4 ; Uses:   R0 (temporary storage)
+                                      5 .globl asc2nibble
+                                      6 
+                                      7 ; converts a binary value to an ascii character
+                                      8 ; --> a: binary value to be converted
+                                      9 ; <-- a: ascii character 
+                                     10 .globl nibble2asc
+                                     11 
+                                     12 ; converts a hex value to ascii
+                                     13 ; --> a: hex value
+                                     14 ; <-- b: ascii equivalent of upper nibble
+                                     15 ; <-- a: ascii equivalent of lower nibble
+                                     16 .globl hex2asc
+                                     17 
+                                     18 .globl asc2byte
+                                     19 
+                                     20 .globl byte2asc
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 5
+Hexadecimal [24-Bits]
+
+
+
+                                      5 .include "conio.inc"
+                                      1 
+                                      2 .globl get_hex_address
+                                      3 
+                                      4 .globl skip_blanks
+                                      5 
+                                      6 .globl println
+                                      7 
+                                      8 ; prints tab
+                                      9 .globl printtab
+                                     10 
+                                     11 ; prints space
+                                     12 .globl printspc
+                                     13 
+                                     14 .globl ahex2word
+                                     15 
+                                     16 .globl ahex2byte
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 6
+Hexadecimal [24-Bits]
+
+
+
+                                      6 
+                                      7 .area CSEG (CODE)
+                                      8 
+      000000                          9 title_str: 
+      000000 09 09 09                10 	.db TAB, TAB, TAB
+      000003 43 6F 70 79 72 69 67    11 	.ascii	"Copyright 2025 Gino Malpartida"
+             68 74 20 32 30 32 35
+             20 47 69 6E 6F 20 4D
+             61 6C 70 61 72 74 69
+             64 61
+      000021 0A 0D 00                12 	.db CR, LF, 0
+                                     13 
+      000024                         14 newline_str:	
+      000024 0A 0D 00                15 	.db CR, LF,0
+      000027                         16 command_prompt_str: 
+      000027 67 35 31 3E 20 00       17 	.asciz "g51> "
+                                     18 
+      00002D                         19 commands:
+      00002D 68 65 6C 70 00          20 	help_cmd:			.asciz	"help"
+      000032 64 69 73 70 6C 61 79    21 	help_cmd_descr:		.asciz	"displays list of available commands."
+             73 20 6C 69 73 74 20
+             6F 66 20 61 76 61 69
+             6C 61 62 6C 65 20 63
+             6F 6D 6D 61 6E 64 73
+             2E 00
+      000057 6C 73 00                22 	ls_cmd:				.asciz	"ls"
+      00005A 64 69 73 70 6C 61 79    23 	ls_cmd_descr:		.asciz	"displays available applications."
+             73 20 61 76 61 69 6C
+             61 62 6C 65 20 61 70
+             70 6C 69 63 61 74 69
+             6F 6E 73 2E 00
+      00007B 70 65 65 6B 00          24 	peek_cmd:			.asciz	"peek"
+      000080 65 78 61 6D 69 6E 65    25 	peek_cmd_descr:		.asciz	"examine a single memory cell."
+             20 61 20 73 69 6E 67
+             6C 65 20 6D 65 6D 6F
+             72 79 20 63 65 6C 6C
+             2E 00
+      00009E 65 78 2E 20 70 65 65    26 	peek_cmd_ex:		.asciz	"ex. peek 1b2c"
+             6B 20 31 62 32 63 00
+      0000AC 70 6F 6B 65 00          27 	poke_cmd:			.asciz	"poke"
+      0000B1 6D 6F 64 69 66 79 20    28 	poke_cmd_descr:		.asciz	"modify a single memory cell."
+             61 20 73 69 6E 67 6C
+             65 20 6D 65 6D 6F 72
+             79 20 63 65 6C 6C 2E
+             00
+      0000CE 65 78 2E 20 70 6F 6B    29 	poke_cmd_ex:		.asciz	"ex. poke 1b2c 55"
+             65 20 31 62 32 63 20
+             35 35 00
+      0000DF 64 75 6D 70 00          30 	dump_cmd:			.asciz	"dump"
+      0000E4 64 69 73 70 6C 61 79    31 	dump_cmd_descr:		.asciz	"displays a 256 memory block."
+             73 20 61 20 32 35 36
+             20 6D 65 6D 6F 72 79
+             20 62 6C 6F 63 6B 2E
+             00
+      000101 65 78 2E 20 64 75 6D    32 	dump_cmd_ex:		.asciz	"ex. dump 12"
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 7
+Hexadecimal [24-Bits]
+
+
+
+             70 20 31 32 00
+      00010D 63 6C 65 61 72 00       33 	clear_cmd:			.asciz	"clear"
+      000113 63 6C 65 61 72 20 73    34 	clear_cmd_descr:	.asciz	"clear screen and homes the cursor."
+             63 72 65 65 6E 20 61
+             6E 64 20 68 6F 6D 65
+             73 20 74 68 65 20 63
+             75 72 73 6F 72 2E 00
+      000136 72 65 73 65 74 00       35 	reset_cmd:			.asciz	"reset"
+      00013C 70 65 72 66 6F 72 6D    36 	reset_cmd_descr:	.asciz	"perform a soft-reset of the system."
+             20 61 20 73 6F 66 74
+             2D 72 65 73 65 74 20
+             6F 66 20 74 68 65 20
+             73 79 73 74 65 6D 2E
+             00
+      000160 66 69 6C 6C 00          37 	fill_cmd:			.asciz	"fill"
+      000165 69 6E 69 74 69 61 6C    38 	fill_cmd_descr:		.asciz	"initializes a memory block with a specific byte."
+             69 7A 65 73 20 61 20
+             6D 65 6D 6F 72 79 20
+             62 6C 6F 63 6B 20 77
+             69 74 68 20 61 20 73
+             70 65 63 69 66 69 63
+             20 62 79 74 65 2E 00
+      000196 65 78 2E 20 66 69 6C    39 	fill_cmd_ex:		.asciz	"ex. fill 1ab7 ff 1a"
+             6C 20 31 61 62 37 20
+             66 66 20 31 61 00
+      0001AA 63 6F 70 79 00          40 	copy_cmd:			.asciz	"copy"
+      0001AF 63 6F 70 69 65 73 20    41 	copy_cmd_descr:		.asciz	"copies a block of data from one memory location to another."
+             61 20 62 6C 6F 63 6B
+             20 6F 66 20 64 61 74
+             61 20 66 72 6F 6D 20
+             6F 6E 65 20 6D 65 6D
+             6F 72 79 20 6C 6F 63
+             61 74 69 6F 6E 20 74
+             6F 20 61 6E 6F 74 68
+             65 72 2E 00
+      0001EB 65 78 2E 20 63 6F 70    42 	copy_cmd_ex:		.asciz	"ex. copy 2d4f 83bd a5"
+             79 20 32 64 34 66 20
+             38 33 62 64 20 61 35
+             00
+      000201 67 6F 74 6F 00          43 	goto_cmd:			.asciz	"goto"
+      000206 6A 75 6D 70 73 20 74    44 	goto_cmd_descr:		.asciz	"jumps to a location in program memory to execute code."
+             6F 20 61 20 6C 6F 63
+             61 74 69 6F 6E 20 69
+             6E 20 70 72 6F 67 72
+             61 6D 20 6D 65 6D 6F
+             72 79 20 74 6F 20 65
+             78 65 63 75 74 65 20
+             63 6F 64 65 2E 00
+      00023D 65 78 2E 20 67 6F 74    45 	goto_cmd_ex:		.asciz	"ex. goto 8ae3"
+             6F 20 38 61 65 33 00
+      00024B 69 72 61 6D 00          46 	iram_cmd:			.asciz	"iram"
+      000250 64 69 73 70 6C 61 79    47 	iram_cmd_descr:		.asciz	"displays the contents of the internal memory area."
+             73 20 74 68 65 20 63
+             6F 6E 74 65 6E 74 73
+             20 6F 66 20 74 68 65
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 8
+Hexadecimal [24-Bits]
+
+
+
+             20 69 6E 74 65 72 6E
+             61 6C 20 6D 65 6D 6F
+             72 79 20 61 72 65 61
+             2E 00
+      000283 73 66 72 00             48 	sfr_cmd:			.asciz	"sfr"
+      000287 64 69 73 70 6C 61 79    49 	sfr_cmd_descr:		.asciz	"displays the special function registers."
+             73 20 74 68 65 20 73
+             70 65 63 69 61 6C 20
+             66 75 6E 63 74 69 6F
+             6E 20 72 65 67 69 73
+             74 65 72 73 2E 00
+      0002B0 77 72 69 74 65 00       50 	write_cmd:			.asciz	"write"
+      0002B6 6D 6F 64 69 66 79 20    51 	write_cmd_descr:	.asciz	"modify an sfr register,"
+             61 6E 20 73 66 72 20
+             72 65 67 69 73 74 65
+             72 2C 00
+      0002CE 65 78 2E 20 77 72 69    52 	write_cmd_ex:		.asciz	"ex. write p1 55"
+             74 65 20 70 31 20 35
+             35 00
+                                     53 
+      0002DE                         54 help_table:
+      0002DE 00 2D 00 32             55 	.dw		help_cmd, help_cmd_descr
+      0002E2 00 57 00 5A             56 	.dw		ls_cmd, ls_cmd_descr
+      0002E6 00 7B 00 80             57 	.dw		peek_cmd, peek_cmd_descr
+      0002EA 00 AC 00 B1             58 	.dw		poke_cmd, poke_cmd_descr
+      0002EE 00 DF 00 E4             59 	.dw		dump_cmd, dump_cmd_descr
+      0002F2 01 0D 01 13             60 	.dw		clear_cmd, clear_cmd_descr
+      0002F6 01 36 01 3C             61 	.dw		reset_cmd, reset_cmd_descr
+      0002FA 01 60 01 65             62 	.dw		fill_cmd, fill_cmd_descr
+      0002FE 01 AA 01 AF             63 	.dw		copy_cmd, copy_cmd_descr
+      000302 02 01 02 06             64 	.dw		goto_cmd, goto_cmd_descr
+      000306 02 4B 02 50             65 	.dw		iram_cmd, iram_cmd_descr
+      00030A 02 83 02 87             66 	.dw		sfr_cmd, sfr_cmd_descr
+      00030E 02 B0 02 B6             67 	.dw		write_cmd, write_cmd_descr
+      000312 00 00 00 00             68 	.dw		0, 0	
+                                     69 
+      000316                         70 help_txt:	
+      000316 68 65 6C 70 00          71 	.asciz	"help"
+      00031B                         72 ls_txt:		
+      00031B 6C 73 00                73 	.asciz	"ls"
+      00031E                         74 peek_txt:	
+      00031E 70 65 65 6B 00          75 	.asciz	"peek"
+      000323                         76 poke_txt:	
+      000323 70 6F 6B 65 00          77 	.asciz	"poke"
+      000328                         78 dump_txt:	
+      000328 64 75 6D 70 00          79 	.asciz	"dump"
+      00032D                         80 clear_txt:	
+      00032D 63 6C 65 61 72 00       81 	.asciz	"clear"
+      000333                         82 reset_txt:
+      000333 72 65 73 65 74 00       83 	.asciz "reset"
+      000339                         84 fill_txt:
+      000339 66 69 6C 6C 00          85 	.asciz "fill"
+      00033E                         86 copy_txt:
+      00033E 63 6F 70 79 00          87 	.asciz "copy"
+      000343                         88 goto_txt:
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 9
+Hexadecimal [24-Bits]
+
+
+
+      000343 67 6F 74 6F 00          89 	.asciz "goto"
+      000348                         90 iram_txt:
+      000348 69 72 61 6D 00          91 	.asciz "iram"
+      00034D                         92 sfr_txt:
+      00034D 73 66 72 00             93 	.asciz "sfr"
+      000351                         94 write_txt:
+      000351 77 72 69 74 65 00       95 	.asciz "write"
+                                     96 
+      000357                         97 msg_err:    
+      000357 49 6E 76 61 6C 69 64    98 	.asciz "Invalid Command"
+             20 43 6F 6D 6D 61 6E
+             64 00
+                                     99 
+      000367                        100 a_short_text:
+      000367 54 68 65 20 71 75 69   101 	.asciz "The quick brown fox jumps over the lazy dog."
+             63 6B 20 62 72 6F 77
+             6E 20 66 6F 78 20 6A
+             75 6D 70 73 20 6F 76
+             65 72 20 74 68 65 20
+             6C 61 7A 79 20 64 6F
+             67 2E 00
+                                    102 
+      000394                        103 mem_test_fail_msg:
+      000394 4D 65 6D 6F 72 79 20   104 	.asciz "Memory test failed."
+             74 65 73 74 20 66 61
+             69 6C 65 64 2E 00
+                                    105 
+      0003A8                        106 mem_test_success_msg:
+      0003A8 4D 65 6D 6F 72 79 20   107 	.asciz "Memory test succeeded."
+             74 65 73 74 20 73 75
+             63 63 65 65 64 65 64
+             2E 00
+                                    108 
+      0003BF                        109 lcd_app_name:
+      0003BF 6C 63 64 00            110 	.asciz "lcd"
+                                    111 
+      0003C3                        112 lcd_app_descr:
+      0003C3 41 6C 6C 6F 77 73 20   113 	.asciz "Allows testing of the lcd screen in P1, P3"
+             74 65 73 74 69 6E 67
+             20 6F 66 20 74 68 65
+             20 6C 63 64 20 73 63
+             72 65 65 6E 20 69 6E
+             20 50 31 2C 20 50 33
+             00
+                                    114 
+      0003EE                        115 pwm_app_name:
+      0003EE 70 77 6D 00            116 	.asciz "pwm"
+                                    117 
+      0003F2                        118 pwm_app_descr:
+      0003F2 41 6C 6C 6F 77 73 20   119 	.asciz "Allows testing of the pwm application."
+             74 65 73 74 69 6E 67
+             20 6F 66 20 74 68 65
+             20 70 77 6D 20 61 70
+             70 6C 69 63 61 74 69
+             6F 6E 2E 00
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 10
+Hexadecimal [24-Bits]
+
+
+
+                                    120 
+      000419                        121 vt102_app_name:
+      000419 76 74 31 30 32 00      122 	.asciz "vt102"
+                                    123 
+      00041F                        124 vt102_app_descr:
+      00041F 41 6C 6C 6F 77 73 20   125 	.asciz "Allows testing the VT102 escape sequences."
+             74 65 73 74 69 6E 67
+             20 74 68 65 20 56 54
+             31 30 32 20 65 73 63
+             61 70 65 20 73 65 71
+             75 65 6E 63 65 73 2E
+             00
+                                    126 
+      00044A                        127 app_table:
+      00044A 03 BF 03 C3 00 00      128 	.dw lcd_app_name, lcd_app_descr, lcd_app
+      000450 03 EE 03 F2 00 00      129 	.dw pwm_app_name, pwm_app_descr, pwm_app
+      000456 04 19 04 1F 00 00      130 	.dw vt102_app_name, vt102_app_descr, vt102_app
+      00045C 00 00 00 00 00 00      131 	.dw 0, 0, 0									; end of table
+                                    132 

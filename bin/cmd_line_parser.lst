@@ -1,0 +1,171 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "cmd_line_parser.inc"
+                                      1 
+                                      2 .globl cmd_line_parser_load
+                                      3 
+                                      4 .globl cmd_line_parser_next_token
+                                      5 
+                                      6 
+                                      7 
+                                      8 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "conio.inc"
+                                      1 
+                                      2 .globl get_hex_address
+                                      3 
+                                      4 .globl skip_blanks
+                                      5 
+                                      6 .globl println
+                                      7 
+                                      8 ; prints tab
+                                      9 .globl printtab
+                                     10 
+                                     11 ; prints space
+                                     12 .globl printspc
+                                     13 
+                                     14 .globl ahex2word
+                                     15 
+                                     16 .globl ahex2byte
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      4 
+                                      5 .area CSEG (CODE)
+                                      6 
+      000000                          7 cmd_line_parser_load:
+      000000 74 00            [12]    8 	mov a, #0x00
+      000002 90 00 00         [24]    9 	mov dptr, #cmd_line_buffer_pos
+      000005 F0               [24]   10 	movx @dptr, a
+      000006 90 00 00         [24]   11 	mov dptr, #cmd_line_buffer
+      000009 12 00 00         [24]   12 	lcall sys_gets
+      00000C 22               [24]   13 	ret
+                                     14 
+      00000D                         15 cmd_line_parser_next_token:
+      00000D AF 83            [24]   16 	mov R7, dph								; save destination address for later use
+      00000F AE 82            [24]   17 	mov R6, dpl
+      000011 90 00 00         [24]   18 	mov dptr, #cmd_line_buffer
+                                     19 	; advance to current buffer position
+      000014 12 00 5C         [24]   20 	lcall cmd_line_parser_set_cur_pos
+      000017 12 00 75         [24]   21 	lcall cmd_line_parser_skip_blanks
+      00001A 75 F0 00         [24]   22 	mov b, #0x00							; initialize token length counter
+      00001D                         23 clp_next_char:
+      00001D E0               [24]   24 	movx a, @dptr							; read character from buffer
+      00001E 60 1F            [24]   25 	jz clp_next_token_exit					; if NULL then exit
+      000020 B4 20 02         [24]   26 	cjne a, #' ', clp_next_token_process	
+      000023 80 1A            [24]   27 	sjmp clp_next_token_exit				; if SPC then exit
+      000025                         28 clp_next_token_process:
+      000025 C5 F0            [12]   29 	xch a, b
+      000027 04               [12]   30 	inc a
+      000028 C5 F0            [12]   31 	xch a, b
+      00002A C0 83            [24]   32 	push dph								; save buffer address
+      00002C C0 82            [24]   33 	push dpl
+      00002E 8F 83            [24]   34 	mov dph, R7								; restore destination address
+      000030 8E 82            [24]   35 	mov dpl, R6
+      000032 F0               [24]   36 	movx @dptr, a							; copy character to it
+      000033 A3               [24]   37 	inc dptr								; increment destination address
+      000034 AF 83            [24]   38 	mov R7, dph								; save destination address
+      000036 AE 82            [24]   39 	mov R6, dpl
+      000038 D0 82            [24]   40 	pop dpl									; restore buffer address
+      00003A D0 83            [24]   41 	pop dph
+      00003C A3               [24]   42 	inc dptr								; increment
+      00003D 80 DE            [24]   43 	sjmp clp_next_char						; go to process next character
+      00003F                         44 clp_next_token_exit:
+      00003F 12 00 4A         [24]   45 	lcall cmd_line_parser_save_cur_pos
+      000042 8F 83            [24]   46 	mov dph, R7								; write NULL to turn it into an asciz
+      000044 8E 82            [24]   47 	mov dpl, R6
+      000046 74 00            [12]   48 	mov a, #0x00
+      000048 F0               [24]   49 	movx @dptr, a
+      000049 22               [24]   50 	ret
+                                     51 
+      00004A                         52 cmd_line_parser_save_cur_pos:
+      00004A C0 83            [24]   53 	push dph
+      00004C C0 82            [24]   54 	push dpl
+                                     55 
+                                     56     ; Calculate: Current DPTR - Base Buffer Address = 1-byte Offset
+      00004E C3               [12]   57     clr c
+      00004F E5 82            [12]   58     mov a, dpl
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 5
+Hexadecimal [24-Bits]
+
+
+
+      000051 94 00            [12]   59     subb a, #cmd_line_buffer
+                                     60     
+      000053 90 00 00         [24]   61     mov dptr, #cmd_line_buffer_pos
+      000056 F0               [24]   62     movx @dptr, a
+                                     63 
+      000057 D0 82            [24]   64     pop dpl
+      000059 D0 83            [24]   65     pop dph
+                                     66 
+      00005B 22               [24]   67 	ret
+                                     68 
+      00005C                         69 cmd_line_parser_set_cur_pos:
+      00005C C0 83            [24]   70 	push dph
+      00005E C0 82            [24]   71 	push dpl
+                                     72 
+      000060 90 00 00         [24]   73 	mov dptr, #cmd_line_buffer_pos
+      000063 E0               [24]   74 	movx a, @dptr
+                                     75 
+      000064 D0 82            [24]   76 	pop dpl
+      000066 D0 83            [24]   77 	pop dph
+                                     78 
+      000068 25 82            [12]   79 	add a, dpl
+      00006A C0 E0            [24]   80 	push a
+                                     81 
+      00006C E5 83            [12]   82 	mov a, dph
+      00006E 34 00            [12]   83 	addc a, #0x00
+      000070 F5 83            [12]   84 	mov dph, a
+      000072 D0 82            [24]   85 	pop dpl
+                                     86 
+      000074 22               [24]   87 	ret
+                                     88 
+      000075                         89 cmd_line_parser_skip_blanks:
+      000075 E0               [24]   90 	movx a, @dptr
+      000076 60 14            [24]   91 	jz clp_skip_blanks_exit
+      000078 B4 20 11         [24]   92 	cjne a, #' ', clp_skip_blanks_exit
+      00007B A3               [24]   93 	inc dptr
+      00007C C0 83            [24]   94 	push dph
+      00007E C0 82            [24]   95 	push dpl
+      000080 90 00 00         [24]   96 	mov dptr, #cmd_line_buffer_pos
+      000083 E0               [24]   97 	movx a, @dptr
+      000084 04               [12]   98 	inc a
+      000085 F0               [24]   99 	movx @dptr, a
+      000086 D0 82            [24]  100 	pop dpl
+      000088 D0 83            [24]  101 	pop dph
+      00008A 80 E9            [24]  102 	sjmp cmd_line_parser_skip_blanks
+      00008C                        103 clp_skip_blanks_exit:
+      00008C 22               [24]  104 	ret
+                                    105 
+                                    106 .area XSEG_UART_BUFFER (XDATA, PAG)
+                                    107 
+      000000                        108 cmd_line_buffer:		.ds 0x0100
+                                    109 
+                                    110 .area XSEG (XDATA)
+      000000                        111 cmd_line_buffer_pos:	.ds	0x01
+                                    112 

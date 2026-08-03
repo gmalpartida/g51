@@ -1,0 +1,16 @@
+SRCS=\
+	 src/sfr.asm\
+	 src/math.asm\
+	 src/bios.asm\
+	 src/cmd_line_parser.asm\
+	 src/cmd_dispatch.asm\
+	 src/apps.asm\
+	 src/vt102.asm\
+	 src/conio.asm\
+	 src/commands.asm\
+	 src/uart.asm\
+	 src/string.asm\
+	 src/logo.asm\
+	 src/ascii.asm\
+	 src/constants.asm\
+	 src/g51.asm\

@@ -1,0 +1,50 @@
+XH3
+H 2 areas 1C global symbols
+S get_seed Ref000000
+S uart_tx_asciz Ref000000
+S vt102_clear_screen Ref000000
+S uart_rx_char Ref000000
+S uart_tx_char Ref000000
+S vt102_line_to Ref000000
+S uart_init Ref000000
+S uart_tx_asciz_xram Ref000000
+S return_uart_rx_buffer Ref000000
+S .__.ABS. Def000000
+S rand Ref000000
+S vt102_send_spc Ref000000
+S uart_rx_isr Ref000000
+S rand_init Ref000000
+S uart_rx_buffer_size Ref000000
+S vt102_send_bs Ref000000
+S vt102_handle_BS Ref000000
+S uart_rx_asciz Ref000000
+A _CODE size 0 flags 0 addr 0
+A CSEG size 23 flags 20 addr 0
+S sys_puts Def000006
+S sys_reset Def00001F
+S sys_puts_xram Def00000C
+S sys_getc Def000003
+S sys_rand Def000015
+S sys_serial_isr Def00000F
+S sys_gets Def000009
+S sys_init Def000018
+S sys_clrscrn Def000012
+S sys_putc Def000000
+T 00 00 00
+R 00 00 00 01
+T 00 00 00 02 00 00 02 00 00 02
+R 00 00 00 01 02 04 00 04 02 07 00 03
+T 00 00 07 00 00 02 00 00 02
+R 00 00 00 01 02 03 00 01 02 06 00 11
+T 00 00 0D 00 00 02 00 00 02
+R 00 00 00 01 02 03 00 07 02 06 00 0C
+T 00 00 13 00 00 02 00 00
+R 00 00 00 01 02 03 00 02 02 06 00 0A
+T 00 00 18
+R 00 00 00 01
+T 00 00 18 12 00 15 12 00 00 22
+R 00 00 00 01 00 04 00 01 02 07 00 06
+T 00 00 1F
+R 00 00 00 01
+T 00 00 1F 02 FF FC 22
+R 00 00 00 01

@@ -1,0 +1,19 @@
+# Wipe default chips and their associated decoders
+memory remove chip rom_chip
+memory remove chip xram_chip
+
+# 1. Create Physical Storage
+memory create chip rom_chip 0x8000 8   # 32KB ROM
+memory create chip xram_chip 0x10000 8 # 64KB RAM
+# 2. Map Logical Address Spaces (The Decoders)
+# Map Internal RAM (0x00-0x7F)
+
+# Map Lower 32KB Code Space to ROM
+memory create addressdecoder rom 0x0000 0x7fff rom_chip 0x0000
+
+# Map Full 64KB Data Space to RAM
+memory create addressdecoder xram 0x0000 0xffff xram_chip 0x0000
+
+# Map Upper 32KB Code Space to RAM (Von Neumann shared area)
+memory create addressdecoder rom 0x8000 0xffff xram_chip 0x8000
+

@@ -1,0 +1,114 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "vt102.inc"
+                                      1 
+                           00001B     2 VT102_ESC			.equ		0x1b
+                                      3 
+                                      4 .globl vt102_clear_screen
+                                      5 
+                                      6 ; draws a line from the current position to a destination
+                                      7 ; --> r7: row of end of line
+                                      8 ; --> r6: col of end of line
+                                      9 .globl vt102_line_to
+                                     10 
+                                     11 .globl vt102_send_bs
+                                     12 
+                                     13 .globl vt102_send_spc
+                                     14 
+                                     15 .globl vt102_handle_BS
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      4 
+                                      5 .area CSEG (CODE);
+                                      6 
+      000000                          7 vt102_clear_screen:
+      000000 90 00 2D         [24]    8 	mov dptr, #VT102_CLEAR_SCREEN
+      000003 12 00 00         [24]    9 	lcall sys_puts
+      000006 22               [24]   10 	ret
+                                     11 
+                                     12 ; draws a line from the current position to a destination
+                                     13 ; --> r7: row of end of line
+                                     14 ; --> r6: col of end of line
+      000007                         15 vt102_line_to:
+      000007 22               [24]   16 	ret
+                                     17 
+      000008                         18 vt102_send_bs:
+      000008 90 00 35         [24]   19 	mov dptr, #VT102_BS_SEQ
+      00000B 12 00 00         [24]   20 	lcall sys_puts
+      00000E 22               [24]   21 	ret
+                                     22 
+      00000F                         23 vt102_send_spc:
+      00000F 90 00 39         [24]   24 	 mov dptr, #VT102_SPC
+      000012 12 00 00         [24]   25 	 lcall sys_puts
+      000015 22               [24]   26 	ret
+                                     27 
+      000016                         28 vt102_handle_BS:
+      000016 90 00 35         [24]   29 	mov dptr, #VT102_BS_SEQ
+      000019 12 00 00         [24]   30 	lcall sys_puts
+      00001C 22               [24]   31 	ret
+                                     32 
+      00001D 1B 5B 41 00             33 VT102_UP:			.db		VT102_ESC, '[', 'A', 0
+      000021 1B 5B 42 00             34 VT102_DOWN:			.db		VT102_ESC, '[', 'B', 0
+      000025 1B 5B 43 00             35 VT102_RIGHT:		.db		VT102_ESC, '[', 'C', 0
+      000029 1B 5B 44 00             36 VT102_LEFT:			.db		VT102_ESC, '[', 'D', 0
+      00002D 1B 5B 48 1B 5B 32 4A    37 VT102_CLEAR_SCREEN:	.db		VT102_ESC, '[', 'H', VT102_ESC, '[', '2', 'J', 0
+             00
+      000035 08 20 08 00             38 VT102_BS_SEQ:		.db		#BS, #SPC, #BS, 0
+      000039 1B 20 00                39 VT102_SPC:			.db		VT102_ESC, #SPC, 0
+                                     40 

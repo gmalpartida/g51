@@ -1,0 +1,169 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "logo.inc"
+                                      1 
+                                      2 .globl g51_logo
+                                      3 
+                                      4 .globl print_logo
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      4 
+                                      5 .area CSEG (CODE)
+                                      6 
+      000000                          7 print_logo:
+      000000 90 00 07         [24]    8 	mov dptr, #g51_logo
+      000003 12 00 00         [24]    9 	lcall sys_puts
+      000006 22               [24]   10 	ret
+                                     11 
+      000007                         12 g51_logo: 
+      000007 5F 5F 5F 5F 5F 2F 5C    13 .ascii		"_____/\\\\\\\\\\\\____/\\\\\\\\\\\\_ ______/\\\\\\_        "
+             5C 5C 5C 5C 5C 5C 5C
+             5C 5C 5C 5C 5F 5F 5F
+             5F 2F 5C 5C 5C 5C 5C
+             5C 5C 5C 5C 5C 5C 5C
+             5F 20 5F 5F 5F 5F 5F
+             5F 2F 5C 5C 5C 5C 5C
+             5C 5F 20 20 20 20 20
+             20 20 20
+      000042 0A 0D                   14 .db	CR, LF
+      000044 20 5F 5F 5F 2F 5C 5C    15 .ascii		" ___/\\\//////////____\/\\\///////////__ __/\\\\\\\_       "
+             5C 2F 2F 2F 2F 2F 2F
+             2F 2F 2F 2F 5F 5F 5F
+             5F 5C 2F 5C 5C 5C 2F
+             2F 2F 2F 2F 2F 2F 2F
+             2F 2F 2F 5F 5F 20 5F
+             5F 2F 5C 5C 5C 5C 5C
+             5C 5C 5F 20 20 20 20
+             20 20 20
+      00007F 0A 0D                   16 .db CR, LF
+      000081 20 20 5F 5F 2F 5C 5C    17 .ascii		"  __/\\\_______________\/\\\_____________ _\/////\\\_      "
+             5C 5F 5F 5F 5F 5F 5F
+             5F 5F 5F 5F 5F 5F 5F
+             5F 5F 5C 2F 5C 5C 5C
+             5F 5F 5F 5F 5F 5F 5F
+             5F 5F 5F 5F 5F 5F 20
+             5F 5C 2F 2F 2F 2F 2F
+             5C 5C 5C 5F 20 20 20
+             20 20 20
+      0000BC 0A 0D                   18 .db CR, LF
+      0000BE 20 20 20 5F 5C 2F 5C    19 .ascii		"   _\/\\\____/\\\\\\\___\/\\\\\\\\\\\\__________\/\\\_     "
+             5C 5C 5F 5F 5F 5F 2F
+             5C 5C 5C 5C 5C 5C 5C
+             5F 5F 5F 5C 2F 5C 5C
+             5C 5C 5C 5C 5C 5C 5C
+             5C 5C 5C 5F 5F 5F 5F
+             5F 5F 5F 5F 5F 5F 5C
+             2F 5C 5C 5C 5F 20 20
+             20 20 20
+      0000F9 0A 0D                   20 .db CR, LF
+      0000FB 20 20 20 20 5F 5C 2F    21 .ascii		"    _\/\\\___\/////\\\___\////////////\\\________\/\\\_    "
+             5C 5C 5C 5F 5F 5F 5C
+             2F 2F 2F 2F 2F 5C 5C
+             5C 5F 5F 5F 5C 2F 2F
+             2F 2F 2F 2F 2F 2F 2F
+             2F 2F 2F 5C 5C 5C 5F
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 5
+Hexadecimal [24-Bits]
+
+
+
+             5F 5F 5F 5F 5F 5F 5F
+             5C 2F 5C 5C 5C 5F 20
+             20 20 20
+      000136 0A 0D                   22 .db CR, LF
+      000138 20 20 20 20 20 5F 5C    23 .ascii		"     _\/\\\_______\/\\\______________\//\\\_______\/\\\_   "
+             2F 5C 5C 5C 5F 5F 5F
+             5F 5F 5F 5F 5C 2F 5C
+             5C 5C 5F 5F 5F 5F 5F
+             5F 5F 5F 5F 5F 5F 5F
+             5F 5F 5C 2F 2F 5C 5C
+             5C 5F 5F 5F 5F 5F 5F
+             5F 5C 2F 5C 5C 5C 5F
+             20 20 20
+      000173 0A 0D                   24 .db CR, LF
+      000175 20 20 20 20 20 20 5F    25 .ascii		"      _\/\\\_______\/\\\___/\\\________\/\\\_______\/\\\_  "
+             5C 2F 5C 5C 5C 5F 5F
+             5F 5F 5F 5F 5F 5C 2F
+             5C 5C 5C 5F 5F 5F 2F
+             5C 5C 5C 5F 5F 5F 5F
+             5F 5F 5F 5F 5C 2F 5C
+             5C 5C 5F 5F 5F 5F 5F
+             5F 5F 5C 2F 5C 5C 5C
+             5F 20 20
+      0001B0 0A 0D                   26 .db CR, LF
+      0001B2 20 20 20 20 20 20 20    27 .ascii		"       _\//\\\\\\\\\\\\/___\//\\\\\\\\\\\\\/________\/\\\_ "
+             5F 5C 2F 2F 5C 5C 5C
+             5C 5C 5C 5C 5C 5C 5C
+             5C 5C 2F 5F 5F 5F 5C
+             2F 2F 5C 5C 5C 5C 5C
+             5C 5C 5C 5C 5C 5C 5C
+             5C 2F 5F 5F 5F 5F 5F
+             5F 5F 5F 5C 2F 5C 5C
+             5C 5F 20
+      0001ED 0A 0D                   28 .db CR, LF
+      0001EF 20 20 20 20 20 20 20    29 .ascii		"        __\////////////______\/////////////__________\///_ "
+             20 5F 5F 5C 2F 2F 2F
+             2F 2F 2F 2F 2F 2F 2F
+             2F 2F 5F 5F 5F 5F 5F
+             5F 5C 2F 2F 2F 2F 2F
+             2F 2F 2F 2F 2F 2F 2F
+             2F 5F 5F 5F 5F 5F 5F
+             5F 5F 5F 5F 5C 2F 2F
+             2F 5F 20
+      00022A 00                      30 .db 0

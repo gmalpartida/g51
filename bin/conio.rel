@@ -1,0 +1,94 @@
+XH3
+H 2 areas 2A global symbols
+S clear_txt Ref000000
+S sys_puts Ref000000
+S sfr_txt Ref000000
+S help_table Ref000000
+S nibble2asc Ref000000
+S asc2nibble Ref000000
+S command_prompt_str Ref000000
+S title_str Ref000000
+S byte2asc Ref000000
+S asc2byte Ref000000
+S ls_txt Ref000000
+S .__.ABS. Def000000
+S sys_reset Ref000000
+S sys_puts_xram Ref000000
+S sys_getc Ref000000
+S reset_txt Ref000000
+S sys_rand Ref000000
+S peek_txt Ref000000
+S fill_txt Ref000000
+S iram_txt Ref000000
+S help_txt Ref000000
+S app_table Ref000000
+S write_txt Ref000000
+S newline_str Ref000000
+S sys_serial_isr Ref000000
+S hex2asc Ref000000
+S poke_txt Ref000000
+S msg_err Ref000000
+S sys_gets Ref000000
+S sys_init Ref000000
+S sys_clrscrn Ref000000
+S dump_txt Ref000000
+S goto_txt Ref000000
+S sys_putc Ref000000
+S copy_txt Ref000000
+A _CODE size 0 flags 0 addr 0
+A CSEG size 54 flags 20 addr 0
+S println Def00003D
+S ahex2byte Def000000
+S skip_blanks Def000033
+S ahex2word Def000012
+S printtab Def000048
+S get_hex_address Def000021
+S printspc Def00004E
+T 00 00 00
+R 00 00 00 01
+T 00 00 00 E0 12 00 00 F5 F0 A3 E0 12 00 00 C4 54
+R 00 00 00 01 02 05 00 05 02 0C 00 05
+T 00 00 0D F0 45 F0 C4 22
+R 00 00 00 01
+T 00 00 12
+R 00 00 00 01
+T 00 00 12 12 00 00 C0 E0 A3 12 00 00 D0 F0 22
+R 00 00 00 01 00 04 00 01 00 0A 00 01
+T 00 00 1E
+R 00 00 00 01
+T 00 00 1E 22
+R 00 00 00 01
+T 00 00 1F
+R 00 00 00 01
+T 00 00 1F 22
+R 00 00 00 01
+T 00 00 20
+R 00 00 00 01
+T 00 00 20 22
+R 00 00 00 01
+T 00 00 21
+R 00 00 00 01
+T 00 00 21 E6 12 00 00 08 F5 F0 E6 12 00 00 C4 54
+R 00 00 00 01 02 05 00 05 02 0C 00 05
+T 00 00 2E F0 45 F0 C4 22
+R 00 00 00 01
+T 00 00 33
+R 00 00 00 01
+T 00 00 33 E0 60 06 B4 20 03 A3 80 F7
+R 00 00 00 01
+T 00 00 3C
+R 00 00 00 01
+T 00 00 3C 22
+R 00 00 00 01
+T 00 00 3D
+R 00 00 00 01
+T 00 00 3D 74 0A 12 00 00 74 0D 12 00 00 22
+R 00 00 00 01 02 06 00 21 02 0B 00 21
+T 00 00 48
+R 00 00 00 01
+T 00 00 48 74 09 12 00 00 22
+R 00 00 00 01 02 06 00 21
+T 00 00 4E
+R 00 00 00 01
+T 00 00 4E 74 20 12 00 00 22
+R 00 00 00 01 02 06 00 21

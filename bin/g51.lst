@@ -1,0 +1,316 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 1
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "bios.inc"
+                                      1 .globl sys_putc
+                                      2 .globl sys_getc
+                                      3 .globl sys_puts
+                                      4 .globl sys_gets
+                                      5 .globl sys_puts_xram
+                                      6 .globl sys_init
+                                      7 .globl sys_serial_isr
+                                      8 .globl sys_clrscrn
+                                      9 .globl sys_reset
+                                     10 .globl sys_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 2
+Hexadecimal [24-Bits]
+
+
+
+                                      2 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 3
+Hexadecimal [24-Bits]
+
+
+
+                                      3 .include "conio.inc"
+                                      1 
+                                      2 .globl get_hex_address
+                                      3 
+                                      4 .globl skip_blanks
+                                      5 
+                                      6 .globl println
+                                      7 
+                                      8 ; prints tab
+                                      9 .globl printtab
+                                     10 
+                                     11 ; prints space
+                                     12 .globl printspc
+                                     13 
+                                     14 .globl ahex2word
+                                     15 
+                                     16 .globl ahex2byte
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 4
+Hexadecimal [24-Bits]
+
+
+
+                                      4 .include "commands.inc"
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 5
+Hexadecimal [24-Bits]
+
+
+
+                                      1 .include "constants.inc"
+                           000009     1 TAB			.equ		0x09
+                           000000     2 NULL 		.equ		0x00 
+                           000008     3 BS 			.equ		0x08
+                           000020     4 SPC			.equ		0x20
+                           00000A     5 CR			.equ		0x0a
+                           00000D     6 LF			.equ		0x0d
+                           00007F     7 DEL			.equ		0x7f
+                                      8 
+                                      9 .globl title_str
+                                     10 .globl newline_str
+                                     11 .globl command_prompt_str
+                                     12 .globl help_table
+                                     13 .globl app_table
+                                     14 .globl help_txt
+                                     15 .globl ls_txt
+                                     16 .globl peek_txt
+                                     17 .globl poke_txt
+                                     18 .globl clear_txt
+                                     19 .globl reset_txt
+                                     20 .globl write_txt
+                                     21 .globl dump_txt
+                                     22 .globl fill_txt
+                                     23 .globl copy_txt
+                                     24 .globl goto_txt
+                                     25 .globl iram_txt
+                                     26 .globl sfr_txt
+                                     27 .globl msg_err
+                                     28 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 6
+Hexadecimal [24-Bits]
+
+
+
+                                      2 
+                                      3 .globl do_help
+                                      4 
+                                      5 .globl do_ls
+                                      6 
+                                      7 .globl do_peek
+                                      8 
+                                      9 .globl do_poke
+                                     10 
+                                     11 .globl do_dump
+                                     12 
+                                     13 .globl do_clear
+                                     14 
+                                     15 ; fills a memory block with a specific byte
+                                     16 .globl do_fill
+                                     17 
+                                     18 ; copies a memory block from one location to another
+                                     19 .globl do_copy
+                                     20 ; jumps to a memory address in program memory
+                                     21 ; --> r6, r7: memmory address in program memory
+                                     22 .globl do_goto
+                                     23 
+                                     24 .globl do_iram
+                                     25 
+                                     26 .globl do_sfr
+                                     27 
+                                     28 .globl do_write
+                                     29 
+                                     30 .globl do_invalid
+                                     31 
+                                     32 .globl do_load
+                                     33 
+                                     34 .globl do_reset
+                                     35 
+                                     36 .globl do_test_goto
+                                     37 
+                                     38 .globl do_test_rand
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 7
+Hexadecimal [24-Bits]
+
+
+
+                                      5 .include "string.inc"
+                                      1 ; finds character c in the first n bytes of a memory buffer in program memory
+                                      2 ; --> r6,r7: address of memory buffer
+                                      3 ; --> r5: 	character for which to search
+                                      4 ; --> r4:	how many bytes at which to look
+                                      5 ; <-- r6,r7: address at which character was found, otherwise NULL
+                                      6 ; <-- c: clear if found, otherwise set
+                                      7 .globl memchr_c
+                                      8 
+                                      9 ; finds character c in the first n bytes of a memory buffer in data memory
+                                     10 ; --> r6,r7: address of memory buffer
+                                     11 ; --> r5: 	character for which to search
+                                     12 ; --> r4:	how many bytes at which to look
+                                     13 ; <-- r6,r7: address at which character was found, otherwise NULL
+                                     14 .globl memchr
+                                     15 
+                                     16 ; compares the first n bytes of two blocks of memory, one of which is in program memory
+                                     17 ; --> r6, r7: 	address of block of memory in program memory
+                                     18 ; --> r4, r5: 	address of block of memory in data memory
+                                     19 ; --> r3: 		how many bytes to compare
+                                     20 ; <-- r7:		0 if equal, -1 if first block is less than second block, otherwise 1
+                                     21 
+                                     22 .globl memcmp_c
+                                     23 
+                                     24 ; copies n bytes from one memory block to another, one of which resides in program memory
+                                     25 ; --> r6, r7: address of source memory block in program memory
+                                     26 ; --> r4, r5: address of destination memory block in data memory
+                                     27 ; --> r3: 	  how many bytes to copy
+                                     28 
+                                     29 .globl memcpy_c
+                                     30 
+                                     31 ; initializes a memory block with a specific byte
+                                     32 ; --> r6, r7: address of memory block
+                                     33 ; --> r5: length of memory block
+                                     34 ; --> r4: byte to fill the block
+                                     35 
+                                     36 .globl memset
+                                     37 
+                                     38 ; moves a memory block from one location to another
+                                     39 ; --> r6, r7: address of source memory block
+                                     40 ; --> r4, r5: address of destination memory block
+                                     41 ; --> r3: how many bytes to move
+                                     42 .globl memcpy
+                                     43 
+                                     44 .globl strncmp
+                                     45 
+                                     46 .globl strcmp
+                                     47 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 8
+Hexadecimal [24-Bits]
+
+
+
+                                      6 .include "logo.inc"
+                                      1 
+                                      2 .globl g51_logo
+                                      3 
+                                      4 .globl print_logo
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 9
+Hexadecimal [24-Bits]
+
+
+
+                                      7 .include "cmd_dispatch.inc"
+                                      1 .globl	cmd_dispatcher_find
+                                      2 .globl cmd_dispatcher_exec
+                                      3 
+                                      4 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 10
+Hexadecimal [24-Bits]
+
+
+
+                                      8 .include "cmd_line_parser.inc"
+                                      1 
+                                      2 .globl cmd_line_parser_load
+                                      3 
+                                      4 .globl cmd_line_parser_next_token
+                                      5 
+                                      6 
+                                      7 
+                                      8 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 11
+Hexadecimal [24-Bits]
+
+
+
+                                      9 
+                                     10 .area VECTORS (CODE)
+                                     11 
+      000000 02 00 00         [24]   12     ljmp main
+      000003                         13 ie0_isr:
+      000003 32               [24]   14 	reti
+      000004                         15 	.blkb	0x07
+      00000B                         16 tf0_isr:
+      00000B 32               [24]   17 	reti
+      00000C                         18 	.blkb	0x07
+      000013                         19 ie1_isr:
+      000013 32               [24]   20 	reti
+      000014                         21 	.blkb	0x07
+      00001B                         22 tf1_isr:
+      00001B 32               [24]   23 	reti
+      00001C                         24 	.blkb	0x07
+      000023                         25 ser_isr:
+      000023 02 00 00         [24]   26 	ljmp sys_serial_isr
+                                     27 
+                                     28 .area CSEG (CODE)
+                                     29 
+      000000                         30 main:
+      000000 75 81 2F         [24]   31     mov sp, #0x2f					; Initialize Stack
+      000003 12 00 00         [24]   32     lcall sys_init					; Setup system
+                                     33 
+      000006 D2 AC            [12]   34 	setb es							; enable serial interrupt
+      000008 D2 AF            [12]   35 	setb ea							; enable global interrupt
+                                     36 
+      00000A 12 00 00         [24]   37 	lcall sys_clrscrn
+                                     38 
+      00000D 90 00 00         [24]   39 	mov dptr, #g51_logo
+      000010 12 00 00         [24]   40 	lcall sys_puts
+                                     41 
+      000013 12 00 00         [24]   42 	lcall println
+                                     43 
+      000016 90 00 00         [24]   44 	mov dptr, #title_str
+      000019 12 00 00         [24]   45 	lcall sys_puts
+      00001C 12 00 00         [24]   46 	lcall println
+                                     47 
+      00001F 74 FF            [12]   48 	mov a, #0xff
+      000021 90 00 00         [24]   49 	mov dptr, #cmd
+      000024 F0               [24]   50 	movx @dptr, a
+      000025 A3               [24]   51 	inc dptr
+      000026 F0               [24]   52 	movx @dptr, a
+                                     53 
+      000027                         54 cmd_prompt:
+                                     55 
+      000027 90 00 00         [24]   56     mov dptr, #command_prompt_str
+      00002A 12 00 00         [24]   57     lcall sys_puts
+                                     58     
+      00002D 12 00 00         [24]   59 	lcall cmd_line_parser_load
+                                     60 
+      000030 90 00 00         [24]   61 	mov dptr, #cmd
+      000033 12 00 00         [24]   62 	lcall cmd_line_parser_next_token
+                                     63 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 12
+Hexadecimal [24-Bits]
+
+
+
+      000036 90 00 00         [24]   64 	mov dptr, #cmd
+      000039 12 00 00         [24]   65 	lcall cmd_dispatcher_exec
+                                     66 
+      00003C 12 00 00         [24]   67 	lcall println
+                                     68 
+      00003F 80 E6            [24]   69 	sjmp cmd_prompt
+                                     70 
+                                     71 .area XSEG (XDATA)
+      000000                         72 cmd:						.ds				0x10
+                                     73 
