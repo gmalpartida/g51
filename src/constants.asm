@@ -67,44 +67,8 @@ help_table:
 	.dw		write_cmd, write_cmd_descr
 	.dw		0, 0	
 
-help_txt:	
-	.asciz	"help"
-ls_txt:		
-	.asciz	"ls"
-peek_txt:	
-	.asciz	"peek"
-poke_txt:	
-	.asciz	"poke"
-dump_txt:	
-	.asciz	"dump"
-clear_txt:	
-	.asciz	"clear"
-reset_txt:
-	.asciz "reset"
-fill_txt:
-	.asciz "fill"
-copy_txt:
-	.asciz "copy"
-goto_txt:
-	.asciz "goto"
-iram_txt:
-	.asciz "iram"
-sfr_txt:
-	.asciz "sfr"
-write_txt:
-	.asciz "write"
-
 msg_err:    
 	.asciz "Invalid Command"
-
-a_short_text:
-	.asciz "The quick brown fox jumps over the lazy dog."
-
-mem_test_fail_msg:
-	.asciz "Memory test failed."
-
-mem_test_success_msg:
-	.asciz "Memory test succeeded."
 
 lcd_app_name:
 	.asciz "lcd"

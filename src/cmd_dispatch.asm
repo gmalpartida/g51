@@ -9,10 +9,10 @@
 ; executes handler for command if found, otherwise executes invalid command handler
 ; --> dptr			address of command string to find
 ; <-- None
-cmd_dispatcher_exec:
+cmd_dispatch_exec:
 	mov R7, dph						; save address of command
 	mov R6, dpl
-	lcall cmd_dispatcher_find		; find it in command table
+	lcall cmd_dispatch_find		; find it in command table
 	inc dptr						; dptr contains address of entry of command or entry of invalid command
 	inc dptr						; advance 3 bytes to address of handler
 	inc dptr
@@ -32,7 +32,7 @@ cmd_dispatcher_exec:
 ; --> R7:R6		address of command to find
 ; <-- dptr		address of entry for found command, otherwise address of unknow command entry
 ; <-- C			set if found, otherwise clear
-cmd_dispatcher_find:
+cmd_dispatch_find:
 	mov dptr, #cmd_dispatch_table
 cmd_dispatch_find_loop:
 	clr a
@@ -77,8 +77,15 @@ cmd_dispatch_find_exit:
 	ret
 
 cmd_dispatch_print_table:
+	mov dptr, #cmd_dispatch_table
+cdpt_loop:
+	movx a, @dptr					; read command id
+	cjne a, #0xff, cdpt_continue
+	sjmp cdpt_exit
+cdpt_continue:
 	
 
+cdpt_exit:
 	ret
 
 cmd_dispatch_help:		.asciz			"help"

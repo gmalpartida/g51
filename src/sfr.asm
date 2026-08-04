@@ -31,7 +31,7 @@ print_sfr_table_loop:
 	push dpl
 	push dph
 	lcall read_sfr						; read sfr content
-	lcall byte2asc						; print it
+	lcall byte2ahex						; print it
 	xch a, b
 	lcall sys_putc
 	xch a, b

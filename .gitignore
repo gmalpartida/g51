@@ -1,0 +1,43 @@
+# ==========================================
+# SDCC (sdas8051 & sdld) Outputs
+# ==========================================
+# Final executable and flash formats
+*.hex
+*.ihx
+*.bin
+
+# Intermediate assembler and linker objects
+*.rel
+*.obj
+*.o
+
+# Assembler listings and symbol definitions
+*.lst
+*.sym
+*.rst
+
+# Linker map and memory configuration files
+*.map
+*.lk
+*.mem
+
+# Tags
+tags
+
+# ==========================================
+# ASEM-51 Outputs
+# ==========================================
+# Hex format is handled above (*.hex)
+# Assembler listing file
+*.lst
+
+# ==========================================
+# General Editor Backups & OS Junk
+# ==========================================
+*~
+*.swp
+*.bak
+.DS_Store
+Thumbs.db
+
+bin/

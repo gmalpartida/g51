@@ -153,7 +153,7 @@ do_peek:
 	mov dpl, a
 	movx a, @dptr
 
-	lcall hex2asc
+	lcall hex2ahex
 
 	mov R0, a
 	mov a, b
@@ -189,7 +189,12 @@ do_poke_loop:
 	mov r0, #0x01
 
 	mov dptr, #hex_byte	
-	lcall ahex2byte
+	movx a, @dptr
+	xch a, b
+	inc dptr
+	movx a, @dptr
+	;lcall ahex2byte
+	lcall asc2byte
 
 	pop dph										; pop upper byte
 	pop dpl										; pop lower byte
@@ -230,7 +235,7 @@ do_dump:
 do_dump_loop:
 	; print row address
 	mov a, dph
-	lcall hex2asc
+	lcall hex2ahex
 
 	xch a, b
 	lcall sys_putc
@@ -238,7 +243,7 @@ do_dump_loop:
 	lcall sys_putc
 
 	mov a, dpl
-	lcall hex2asc
+	lcall hex2ahex
 	xch a, b
 	lcall sys_putc
 	xch a, b
@@ -251,7 +256,7 @@ do_dump_loop:
 	mov r0, #0x10
 row_data_loop:
 	movx a, @dptr
-	lcall hex2asc
+	lcall hex2ahex
 	xch a, b
 	lcall sys_putc
 	xch a, b
@@ -277,7 +282,7 @@ print_dump_header_loop:
 	lcall sys_putc
 	mov a, r4
 	anl a, #0x0f
-	lcall nibble2asc
+	lcall nibble2ahex
 	lcall sys_putc
 	mov a, #' '
 	lcall sys_putc
@@ -307,7 +312,12 @@ do_fill:
 	mov dptr, #hex_byte
 	lcall cmd_line_parser_next_token			; read fill char
 	mov dptr, #hex_byte
-	lcall ahex2byte
+	movx a, @dptr
+	xch a, b
+	inc dptr
+	movx a, @dptr
+	;lcall ahex2byte
+	lcall asc2byte
 	push a										; push a = fill char
 
 	mov dptr, #cmd_line_input_temp				; check for trailing garbage
@@ -418,11 +428,11 @@ do_iram_row_loop:
 	mov b, a
 	swap a
 	anl a, #0x0f
-	lcall nibble2asc
+	lcall nibble2ahex
 	lcall sys_putc
 	mov a, b
 	anl a, #0x0f
-	lcall nibble2asc
+	lcall nibble2ahex
 	lcall sys_putc
 	push 0x07
 	mov r7, #0x01
@@ -433,11 +443,11 @@ do_iram_col_loop:
 	mov b, a
 	swap a
 	anl a, #0x0f
-	lcall nibble2asc
+	lcall nibble2ahex
 	lcall sys_putc
 	mov a, b
 	anl a, #0x0f
-	lcall nibble2asc
+	lcall nibble2ahex
 	lcall sys_putc
 	mov a, #SPC
 	lcall sys_putc
@@ -480,55 +490,6 @@ do_clear_exit:
 	ret
 
 do_write:
-	lcall println
-	lcall skip_blanks
-	mov a, @r0
-	cjne a, #'p', do_write_error
-	inc r0
-	mov a, @r0
-	inc r0
-	cjne a, #'0', do_write_not_0
-	lcall skip_blanks
-	lcall get_hex_address
-	mov p0, a
-	sjmp do_write_exit
-do_write_not_0:
-	cjne a, #'1', do_write_not_1
-	lcall skip_blanks
-	lcall get_hex_address
-	mov p1, a
-	sjmp do_write_exit
-do_write_not_1:
-	cjne a, #'2', do_write_not_2
-	lcall skip_blanks
-	lcall get_hex_address
-	mov p2, a
-	sjmp do_write_exit
-do_write_not_2:
-	cjne a, #'3', do_write_not_3
-	lcall skip_blanks
-	lcall get_hex_address
-	mov p3, a
-	sjmp do_write_exit
-do_write_not_3:
-	cjne a, #'c', do_write_not_pcon
-	inc r0
-	mov a, @r0
-	cjne a, #'o', do_write_error
-	inc r0
-	mov a, @r0
-	cjne a, #'n', do_write_error
-	inc r0
-	lcall skip_blanks
-	lcall get_hex_address
-	mov pcon, a
-	sjmp do_write_exit
-do_write_not_pcon:
-do_write_error:
-	setb c
-	ret
-do_write_exit:
-	clr c
 	ret
 
 do_invalid:
@@ -696,14 +657,14 @@ do_test_rand_loop:
 
 	push a
 	xch a, b
-	lcall byte2asc
+	lcall byte2ahex
 	xch a, b
 	lcall sys_putc
 	xch a, b
 	lcall sys_putc
 
 	pop a
-	lcall byte2asc
+	lcall byte2ahex
 	xch a, b
 	lcall sys_putc
 	xch a, b

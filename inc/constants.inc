@@ -11,18 +11,5 @@ DEL			.equ		0x7f
 .globl command_prompt_str
 .globl help_table
 .globl app_table
-.globl help_txt
-.globl ls_txt
-.globl peek_txt
-.globl poke_txt
-.globl clear_txt
-.globl reset_txt
-.globl write_txt
-.globl dump_txt
-.globl fill_txt
-.globl copy_txt
-.globl goto_txt
-.globl iram_txt
-.globl sfr_txt
 .globl msg_err
 

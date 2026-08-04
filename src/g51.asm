@@ -45,12 +45,6 @@ main:
 	lcall sys_puts
 	lcall println
 
-	mov a, #0xff
-	mov dptr, #cmd
-	movx @dptr, a
-	inc dptr
-	movx @dptr, a
-
 cmd_prompt:
 
     mov dptr, #command_prompt_str
@@ -62,7 +56,7 @@ cmd_prompt:
 	lcall cmd_line_parser_next_token
 
 	mov dptr, #cmd
-	lcall cmd_dispatcher_exec
+	lcall cmd_dispatch_exec
 
 	lcall println
 
