@@ -10,59 +10,17 @@
 .include "uart.inc"
 ;.include "math.inc"
 .include "sfr.inc"
+.include "cmd_dispatch.inc"
 
 .area CSEG (CODE)
 
 do_help:
 	lcall println
-	mov dptr, #cmd_line_input_temp
-	lcall cmd_line_parser_next_token
-	xch a, b
-	jnz do_help_err
-	mov dptr, #help_table
-do_help_loop:
-	clr a
-	movc a, @a + dptr		; high byte of command
-	mov r7, a				
-	mov a, #1
-	movc a, @a + dptr		; low byte of command
-	mov r6, a
-	orl a, r7
-	jz do_help_exit
-	mov a, #TAB
-	lcall sys_putc
-	push dph				; save table pointer
-	push dpl
-	mov dph, r7				; get address of command
-	mov dpl, r6
-	lcall sys_puts; send command to uart
-	mov a, #TAB
-	lcall sys_putc
-	lcall sys_putc
-	pop dpl
-	pop dph
-	inc dptr				; advance to command description
-	inc dptr
-	clr a
-	movc a, @a + dptr
-	mov r7, a
-	mov a, #1
-	movc a, @a + dptr
-	mov r6, a
-	push dph
-	push dpl
-	mov dph, r7
-	mov dpl, r6
-	lcall sys_puts
+
+	lcall cmd_dispatch_print_table
+
 	lcall println
-	pop dpl					; restore table pointer
-	pop dph
-	inc dptr				; advance to next record in table
-	inc dptr
-	sjmp do_help_loop
-do_help_err:
-	lcall do_invalid
-do_help_exit:
+
 	ret
 
 do_ls:
@@ -132,40 +90,172 @@ do_reset_err:
 do_peek:
 	lcall println
 
-	mov dptr, #hex_word
-	lcall cmd_line_parser_next_token		; get hex address
-	mov dptr, #cmd_line_input_temp
-	lcall cmd_line_parser_next_token		; read any trailing garbage
-	xch a, b								; check token length <> 0
-	jnz do_peek_err							; if any trailing garbage read then invalid command
-
-	mov dptr, #hex_word
-	lcall sys_puts_xram
-	mov a, #':'
-	lcall sys_putc
-	mov a, #' '
-	lcall sys_putc
-
-	mov dptr, #hex_word
-	lcall ahex2word							; convert to binary
+	mov dptr, #mem_type
+	lcall cmd_line_parser_next_token
 	
-	mov dph, b
-	mov dpl, a
-	movx a, @dptr
+	mov r7, #>mem_type
+	mov r6, #<mem_type
+	mov dptr, #xram_str
+	lcall strcmp
+	jc do_peek_xram_lbl
+	
+	mov r7, #>mem_type
+	mov r6, #<mem_type
+	mov dptr, #iram_str
+	lcall strcmp
+	jc do_peek_iram_lbl
 
-	lcall hex2ahex
+	mov r7, #>mem_type
+	mov r6, #<mem_type
+	mov dptr, #rom_str
+	lcall strcmp
+	jc do_peek_rom
 
-	mov R0, a
-	mov a, b
-	lcall sys_putc
-	mov a, R0
-	lcall sys_putc
+	mov r7, #>mem_type
+	mov r6, #<mem_type
+	mov dptr, #sfr_str
+	lcall strcmp
+	jc do_peek_sfr_lbl
+
+	sjmp do_peek_err
+
+do_peek_xram_lbl:
+	lcall do_peek_xram
 	sjmp do_peek_exit
+
+do_peek_iram_lbl:
+	lcall do_iram
+	sjmp do_peek_exit
+
+do_peek_rom_lbl:
+	lcall do_peek_rom
+	sjmp do_peek_exit
+
+do_peek_sfr_lbl:
+	lcall do_sfr
+	sjmp do_peek_exit
+
 do_peek_err:
 	lcall do_invalid	
 do_peek_exit:
 	lcall println
 	ret
+
+do_peek_rom:
+	mov dptr, #hex_word
+	lcall cmd_line_parser_next_token
+	mov dptr, #hex_word
+	lcall ahex2word							; address in b:a
+	push a									; save in stack because
+	push 0xf0								; cmd_line_parser_next_token use the registers
+	mov dptr, #hex_word
+	lcall cmd_line_parser_next_token		; get length
+	pop 0x07								; restore into r7
+	pop 0x06								; restore into r6
+	mov dptr, #hex_word
+	lcall ahex2word							; length in b:a
+	mov r3, b
+	mov r2, a
+	lcall printtab
+	mov a, #0x10
+	lcall do_print_header_block
+	lcall println
+	mov r4, #0x10
+
+do_peek_rom_loop:
+	mov a, r2
+	orl a, r3
+	jz do_peek_rom_exit
+
+	mov dph, r7
+	mov dpl, r6
+	clr a
+	movc a, @a + dptr							; read char
+	push a
+	cjne r4, #0x10, dpxl_next_rom_byte
+	mov b, dph
+	mov a, dpl
+	lcall print_hex_word
+	lcall printtab
+dpxl_next_rom_byte:
+	inc dptr
+	mov r7, dph
+	mov r6, dpl
+	pop a
+	lcall print_hex_byte
+	djnz r4, dpxl_rom_spc
+	lcall println
+	mov r4, #0x10
+	sjmp dpxl_rom_cont
+dpxl_rom_spc:
+	lcall printspc
+	lcall printspc
+dpxl_rom_cont:
+	dec r2
+	cjne r2, #0xff, do_peek_rom_loop
+	dec r3
+	sjmp do_peek_rom_loop
+
+do_peek_rom_exit:
+	ret
+
+do_peek_xram:
+	mov dptr, #hex_word
+	lcall cmd_line_parser_next_token
+	mov dptr, #hex_word
+	lcall ahex2word							; address in b:a
+	push a
+	push 0xf0
+	mov dptr, #hex_word
+	lcall cmd_line_parser_next_token		; get length
+	pop 0x07
+	pop 0x06
+	mov dptr, #hex_word
+	lcall ahex2word							; length in b:a
+	mov r2, a
+	mov r3, b
+	lcall printtab
+	mov a, #0x10
+	lcall do_print_header_block
+	lcall println
+	mov r4, #0x10
+
+do_peek_xram_loop:
+	mov a, r2
+	orl a, r3
+	jz do_peek_xram_exit
+
+	mov dph, r7
+	mov dpl, r6
+	movx a, @dptr							; read char
+	push a
+	cjne r4, #0x10, dpxl_next_byte
+	mov b, dph
+	mov a, dpl
+	lcall print_hex_word
+	lcall printtab
+dpxl_next_byte:
+	inc dptr
+	mov r7, dph
+	mov r6, dpl
+	pop a
+	lcall print_hex_byte
+	djnz r4, dpxl_spc
+	lcall println
+	mov r4, #0x10
+	sjmp dpxl_cont
+dpxl_spc:
+	lcall printspc
+	lcall printspc
+dpxl_cont:
+	dec r2
+	cjne r2, #0xff, do_peek_xram_loop
+	dec r3
+	sjmp do_peek_xram_loop
+
+do_peek_xram_exit:
+	ret
+
 
 do_poke:
 	lcall println
@@ -228,7 +318,7 @@ do_dump:
 	mov dpl, a
 
 	lcall printtab
-	acall print_dump_header
+	lcall print_dump_header
 	lcall println
 	
 	mov r1, #0x10
@@ -418,7 +508,7 @@ do_iram:
 
 	mov r7, #0x01
 	lcall printtab
-	acall print_dump_header
+	lcall print_dump_header
 	lcall println
 	mov r7, #0x08				; how many rows
 	mov r0, #0x00				; starting address
@@ -647,6 +737,23 @@ dl_add_to_checksum:
 
 	ret
 
+do_print_header_block:
+	mov r0, a
+	mov r1, #0x00
+dphb_loop:
+	mov a, r1
+	lcall byte2ahex
+	xch a, b
+	lcall sys_putc
+	xch a, b
+	lcall sys_putc
+	lcall printspc
+	lcall printspc
+	inc r1
+	djnz r0, dphb_loop
+
+	ret
+
 do_test_rand:
 	lcall println
 
@@ -692,6 +799,7 @@ do_test_goto:
 
 .area XSEG (XDATA)
 
+mem_type:				.ds			0x10
 hex_word:				.ds			0x10
 hex_byte:				.ds			0x10
 cmd_line_input_temp:	.ds			0x10

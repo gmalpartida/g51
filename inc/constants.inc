@@ -9,7 +9,10 @@ DEL			.equ		0x7f
 .globl title_str
 .globl newline_str
 .globl command_prompt_str
-.globl help_table
 .globl app_table
 .globl msg_err
-
+.globl mem_types
+.globl iram_str
+.globl rom_str
+.globl xram_str
+.globl sfr_str
