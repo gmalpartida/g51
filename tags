@@ -66,36 +66,26 @@ cdpt_exit	src/cmd_dispatch.asm	/^cdpt_exit:$/;"	l
 cdpt_loop	src/cmd_dispatch.asm	/^cdpt_loop:$/;"	l
 check_alpha	src/ascii.asm	/^check_alpha:$/;"	l
 check_range	src/ascii.asm	/^check_range:$/;"	l
-clear_cmd	src/constants.asm	/^	clear_cmd:			.asciz	"clear"$/;"	l
-clear_cmd_descr	src/constants.asm	/^	clear_cmd_descr:	.asciz	"clear screen and homes the cursor."$/;"	l
+clear_cmd_descr	src/cmd_dispatch.asm	/^	clear_cmd_descr:	.asciz	"clear screen and homes the cursor."$/;"	l
 clp_next_char	src/cmd_line_parser.asm	/^clp_next_char:$/;"	l
 clp_next_token_exit	src/cmd_line_parser.asm	/^clp_next_token_exit:$/;"	l
 clp_next_token_process	src/cmd_line_parser.asm	/^clp_next_token_process:$/;"	l
 clp_skip_blanks_exit	src/cmd_line_parser.asm	/^clp_skip_blanks_exit:$/;"	l
 cmd	src/g51.asm	/^cmd:						.ds				0x10$/;"	l
-cmd_dispatch_clear	src/cmd_dispatch.asm	/^cmd_dispatch_clear:		.asciz			"clear"$/;"	l
-cmd_dispatch_copy	src/cmd_dispatch.asm	/^cmd_dispatch_copy:		.asciz			"copy"$/;"	l
-cmd_dispatch_dump	src/cmd_dispatch.asm	/^cmd_dispatch_dump:		.asciz			"dump"$/;"	l
+cmd_clear	src/cmd_dispatch.asm	/^cmd_clear:		.asciz			"clear"$/;"	l
+cmd_copy	src/cmd_dispatch.asm	/^cmd_copy:		.asciz			"copy"$/;"	l
 cmd_dispatch_exec	src/cmd_dispatch.asm	/^cmd_dispatch_exec:$/;"	l
-cmd_dispatch_fill	src/cmd_dispatch.asm	/^cmd_dispatch_fill:		.asciz			"fill"$/;"	l
 cmd_dispatch_find	src/cmd_dispatch.asm	/^cmd_dispatch_find:$/;"	l
 cmd_dispatch_find_exit	src/cmd_dispatch.asm	/^cmd_dispatch_find_exit:$/;"	l
 cmd_dispatch_find_loop	src/cmd_dispatch.asm	/^cmd_dispatch_find_loop:$/;"	l
 cmd_dispatch_find_match	src/cmd_dispatch.asm	/^cmd_dispatch_find_match:$/;"	l
-cmd_dispatch_goto	src/cmd_dispatch.asm	/^cmd_dispatch_goto:		.asciz			"goto"$/;"	l
-cmd_dispatch_help	src/cmd_dispatch.asm	/^cmd_dispatch_help:		.asciz			"help"$/;"	l
-cmd_dispatch_iram	src/cmd_dispatch.asm	/^cmd_dispatch_iram:		.asciz			"iram"$/;"	l
-cmd_dispatch_load	src/cmd_dispatch.asm	/^cmd_dispatch_load:		.asciz			"load"$/;"	l
-cmd_dispatch_ls	src/cmd_dispatch.asm	/^cmd_dispatch_ls:		.asciz			"ls"$/;"	l
-cmd_dispatch_peek	src/cmd_dispatch.asm	/^cmd_dispatch_peek:		.asciz			"peek"$/;"	l
-cmd_dispatch_poke	src/cmd_dispatch.asm	/^cmd_dispatch_poke:		.asciz			"poke"$/;"	l
 cmd_dispatch_print_table	src/cmd_dispatch.asm	/^cmd_dispatch_print_table:$/;"	l
-cmd_dispatch_reset	src/cmd_dispatch.asm	/^cmd_dispatch_reset:		.asciz			"reset"$/;"	l
-cmd_dispatch_sfr	src/cmd_dispatch.asm	/^cmd_dispatch_sfr:		.asciz			"sfr"$/;"	l
 cmd_dispatch_table	src/cmd_dispatch.asm	/^cmd_dispatch_table:$/;"	l
-cmd_dispatch_test_goto	src/cmd_dispatch.asm	/^cmd_dispatch_test_goto:	.asciz			"test_goto"$/;"	l
-cmd_dispatch_test_rand	src/cmd_dispatch.asm	/^cmd_dispatch_test_rand:	.asciz			"test_rand"$/;"	l
-cmd_dispatch_write	src/cmd_dispatch.asm	/^cmd_dispatch_write:		.asciz			"write"$/;"	l
+cmd_dump	src/cmd_dispatch.asm	/^cmd_dump:		.asciz			"dump"$/;"	l
+cmd_fill	src/cmd_dispatch.asm	/^cmd_fill:		.asciz			"fill"$/;"	l
+cmd_goto	src/cmd_dispatch.asm	/^cmd_goto:		.asciz			"goto"$/;"	l
+cmd_help	src/cmd_dispatch.asm	/^cmd_help:		.asciz			"help"$/;"	l
+cmd_iram	src/cmd_dispatch.asm	/^cmd_iram:		.asciz			"iram"$/;"	l
 cmd_line_buffer	src/cmd_line_parser.asm	/^cmd_line_buffer:		.ds 0x0100$/;"	l
 cmd_line_buffer_pos	src/cmd_line_parser.asm	/^cmd_line_buffer_pos:	.ds	0x01$/;"	l
 cmd_line_input_temp	src/commands.asm	/^cmd_line_input_temp:	.ds			0x10$/;"	l
@@ -104,12 +94,18 @@ cmd_line_parser_next_token	src/cmd_line_parser.asm	/^cmd_line_parser_next_token:
 cmd_line_parser_save_cur_pos	src/cmd_line_parser.asm	/^cmd_line_parser_save_cur_pos:$/;"	l
 cmd_line_parser_set_cur_pos	src/cmd_line_parser.asm	/^cmd_line_parser_set_cur_pos:$/;"	l
 cmd_line_parser_skip_blanks	src/cmd_line_parser.asm	/^cmd_line_parser_skip_blanks:$/;"	l
+cmd_load	src/cmd_dispatch.asm	/^cmd_load:		.asciz			"load"$/;"	l
+cmd_ls	src/cmd_dispatch.asm	/^cmd_ls:		.asciz			"ls"$/;"	l
+cmd_peek	src/cmd_dispatch.asm	/^cmd_peek:		.asciz			"peek"$/;"	l
+cmd_poke	src/cmd_dispatch.asm	/^cmd_poke:		.asciz			"poke"$/;"	l
 cmd_prompt	src/g51.asm	/^cmd_prompt:$/;"	l
+cmd_reset	src/cmd_dispatch.asm	/^cmd_reset:		.asciz			"reset"$/;"	l
+cmd_sfr	src/cmd_dispatch.asm	/^cmd_sfr:		.asciz			"sfr"$/;"	l
+cmd_test_goto	src/cmd_dispatch.asm	/^cmd_test_goto:	.asciz			"test_goto"$/;"	l
+cmd_test_rand	src/cmd_dispatch.asm	/^cmd_test_rand:	.asciz			"test_rand"$/;"	l
+cmd_write	src/cmd_dispatch.asm	/^cmd_write:		.asciz			"write"$/;"	l
 command_prompt_str	src/constants.asm	/^command_prompt_str: $/;"	l
-commands	src/constants.asm	/^commands:$/;"	l
-copy_cmd	src/constants.asm	/^	copy_cmd:			.asciz	"copy"$/;"	l
-copy_cmd_descr	src/constants.asm	/^	copy_cmd_descr:		.asciz	"copies a block of data from one memory location to another."$/;"	l
-copy_cmd_ex	src/constants.asm	/^	copy_cmd_ex:		.asciz	"ex. copy 2d4f 83bd a5"$/;"	l
+copy_cmd_descr	src/cmd_dispatch.asm	/^	copy_cmd_descr:		.asciz	"copies a block of data from one memory location to another."$/;"	l
 current_address	test/test_ihex.py	/^current_address = 0x0000$/;"	v
 data_payload	test/test_ihex.py	/^    data_payload = [(i \/\/ bytes_per_line + j) & 0xFF for j in range(bytes_per_line)]$/;"	v
 dl_add_to_checksum	src/commands.asm	/^dl_add_to_checksum:$/;"	l
@@ -141,9 +137,6 @@ do_goto	src/commands.asm	/^do_goto:$/;"	l
 do_goto_err	src/commands.asm	/^do_goto_err:$/;"	l
 do_goto_exit	src/commands.asm	/^do_goto_exit:$/;"	l
 do_help	src/commands.asm	/^do_help:$/;"	l
-do_help_err	src/commands.asm	/^do_help_err:$/;"	l
-do_help_exit	src/commands.asm	/^do_help_exit:$/;"	l
-do_help_loop	src/commands.asm	/^do_help_loop:$/;"	l
 do_invalid	src/commands.asm	/^do_invalid:$/;"	l
 do_iram	src/commands.asm	/^do_iram:$/;"	l
 do_iram_col_loop	src/commands.asm	/^do_iram_col_loop:$/;"	l
@@ -159,10 +152,20 @@ do_next_number	src/commands.asm	/^do_next_number:$/;"	l
 do_peek	src/commands.asm	/^do_peek:$/;"	l
 do_peek_err	src/commands.asm	/^do_peek_err:$/;"	l
 do_peek_exit	src/commands.asm	/^do_peek_exit:$/;"	l
+do_peek_iram_lbl	src/commands.asm	/^do_peek_iram_lbl:$/;"	l
+do_peek_rom	src/commands.asm	/^do_peek_rom:$/;"	l
+do_peek_rom_exit	src/commands.asm	/^do_peek_rom_exit:$/;"	l
+do_peek_rom_loop	src/commands.asm	/^do_peek_rom_loop:$/;"	l
+do_peek_sfr_lbl	src/commands.asm	/^do_peek_sfr_lbl:$/;"	l
+do_peek_xram	src/commands.asm	/^do_peek_xram:$/;"	l
+do_peek_xram_exit	src/commands.asm	/^do_peek_xram_exit:$/;"	l
+do_peek_xram_lbl	src/commands.asm	/^do_peek_xram_lbl:$/;"	l
+do_peek_xram_loop	src/commands.asm	/^do_peek_xram_loop:$/;"	l
 do_poke	src/commands.asm	/^do_poke:$/;"	l
 do_poke_exit	src/commands.asm	/^do_poke_exit:$/;"	l
 do_poke_invalid	src/commands.asm	/^do_poke_invalid:$/;"	l
 do_poke_loop	src/commands.asm	/^do_poke_loop:$/;"	l
+do_print_header_block	src/commands.asm	/^do_print_header_block:$/;"	l
 do_reset	src/commands.asm	/^do_reset:$/;"	l
 do_reset_err	src/commands.asm	/^do_reset_err:$/;"	l
 do_sfr	src/commands.asm	/^do_sfr:$/;"	l
@@ -175,22 +178,21 @@ do_test_rand	src/commands.asm	/^do_test_rand:$/;"	l
 do_test_rand_loop	src/commands.asm	/^do_test_rand_loop:$/;"	l
 do_write	src/commands.asm	/^do_write:$/;"	l
 dph_sfr	src/sfr.asm	/^dph_sfr:	.asciz	"DPH"$/;"	l
+dphb_loop	src/commands.asm	/^dphb_loop:$/;"	l
 dpl_sfr	src/sfr.asm	/^dpl_sfr:	.asciz	"DPL"$/;"	l
-dump_cmd	src/constants.asm	/^	dump_cmd:			.asciz	"dump"$/;"	l
-dump_cmd_descr	src/constants.asm	/^	dump_cmd_descr:		.asciz	"displays a 256 memory block."$/;"	l
-dump_cmd_ex	src/constants.asm	/^	dump_cmd_ex:		.asciz	"ex. dump 12"$/;"	l
-fill_cmd	src/constants.asm	/^	fill_cmd:			.asciz	"fill"$/;"	l
-fill_cmd_descr	src/constants.asm	/^	fill_cmd_descr:		.asciz	"initializes a memory block with a specific byte."$/;"	l
-fill_cmd_ex	src/constants.asm	/^	fill_cmd_ex:		.asciz	"ex. fill 1ab7 ff 1a"$/;"	l
+dpxl_cont	src/commands.asm	/^dpxl_cont:$/;"	l
+dpxl_next_byte	src/commands.asm	/^dpxl_next_byte:$/;"	l
+dpxl_next_rom_byte	src/commands.asm	/^dpxl_next_rom_byte:$/;"	l
+dpxl_rom_cont	src/commands.asm	/^dpxl_rom_cont:$/;"	l
+dpxl_rom_spc	src/commands.asm	/^dpxl_rom_spc:$/;"	l
+dpxl_spc	src/commands.asm	/^dpxl_spc:$/;"	l
+dump_cmd_descr	src/cmd_dispatch.asm	/^	dump_cmd_descr:		.asciz	"displays a 256 memory block."$/;"	l
+fill_cmd_descr	src/cmd_dispatch.asm	/^	fill_cmd_descr:		.asciz	"initializes a memory block with a specific byte."$/;"	l
 g51_logo	src/logo.asm	/^g51_logo: $/;"	l
 generate_ihex_line	test/test_ihex.py	/^def generate_ihex_line(address, data):$/;"	f
 get_seed	src/math.asm	/^get_seed:$/;"	l
-goto_cmd	src/constants.asm	/^	goto_cmd:			.asciz	"goto"$/;"	l
-goto_cmd_descr	src/constants.asm	/^	goto_cmd_descr:		.asciz	"jumps to a location in program memory to execute code."$/;"	l
-goto_cmd_ex	src/constants.asm	/^	goto_cmd_ex:		.asciz	"ex. goto 8ae3"$/;"	l
-help_cmd	src/constants.asm	/^	help_cmd:			.asciz	"help"$/;"	l
-help_cmd_descr	src/constants.asm	/^	help_cmd_descr:		.asciz	"displays list of available commands."$/;"	l
-help_table	src/constants.asm	/^help_table:$/;"	l
+goto_cmd_descr	src/cmd_dispatch.asm	/^	goto_cmd_descr:		.asciz	"jumps to a location in program memory to execute code."$/;"	l
+help_cmd_descr	src/cmd_dispatch.asm	/^	help_cmd_descr:		.asciz	"displays list of available commands."$/;"	l
 hex2ahex	src/ascii.asm	/^hex2ahex:$/;"	l
 hex_byte	src/commands.asm	/^hex_byte:				.ds			0x10$/;"	l
 hex_word	src/commands.asm	/^hex_word:				.ds			0x10$/;"	l
@@ -203,14 +205,16 @@ ihex_lines	test/test_ihex.py	/^ihex_lines = []$/;"	v
 ihex_record_length	src/commands.asm	/^ihex_record_length:		.ds			0x01$/;"	l
 ihex_record_type	src/commands.asm	/^ihex_record_type:		.ds			0x01$/;"	l
 ip_sfr	src/sfr.asm	/^ip_sfr:		.asciz	"IP"$/;"	l
-iram_cmd	src/constants.asm	/^	iram_cmd:			.asciz	"iram"$/;"	l
-iram_cmd_descr	src/constants.asm	/^	iram_cmd_descr:		.asciz	"displays the contents of the internal memory area."$/;"	l
+iram_cmd_descr	src/cmd_dispatch.asm	/^	iram_cmd_descr:		.asciz	"displays the contents of the internal memory area."$/;"	l
+iram_str	src/constants.asm	/^iram_str:	.asciz		"iram"$/;"	l
 lcd_app	src/apps.asm	/^lcd_app:$/;"	l
 lcd_app_descr	src/constants.asm	/^lcd_app_descr:$/;"	l
 lcd_app_name	src/constants.asm	/^lcd_app_name:$/;"	l
-ls_cmd	src/constants.asm	/^	ls_cmd:				.asciz	"ls"$/;"	l
-ls_cmd_descr	src/constants.asm	/^	ls_cmd_descr:		.asciz	"displays available applications."$/;"	l
+load_cmd_descr	src/cmd_dispatch.asm	/^	load_cmd_descr:		.asciz	"loads a hex file into xram."$/;"	l
+ls_cmd_descr	src/cmd_dispatch.asm	/^	ls_cmd_descr:		.asciz	"displays available applications."$/;"	l
 main	src/g51.asm	/^main:$/;"	l
+mem_type	src/commands.asm	/^mem_type:				.ds			0x10$/;"	l
+mem_types	src/constants.asm	/^mem_types:$/;"	l
 memchr	src/string.asm	/^memchr:$/;"	l
 memchr_c	src/string.asm	/^memchr_c:$/;"	l
 memchr_loop	src/string.asm	/^memchr_loop:$/;"	l
@@ -241,14 +245,14 @@ p1_sfr	src/sfr.asm	/^p1_sfr:		.asciz	"P1"$/;"	l
 p2_sfr	src/sfr.asm	/^p2_sfr:		.asciz	"P2"$/;"	l
 p3_sfr	src/sfr.asm	/^p3_sfr:		.asciz	"P3"$/;"	l
 pcon_sfr	src/sfr.asm	/^pcon_sfr:	.asciz	"PCON"$/;"	l
-peek_cmd	src/constants.asm	/^	peek_cmd:			.asciz	"peek"$/;"	l
-peek_cmd_descr	src/constants.asm	/^	peek_cmd_descr:		.asciz	"examine a single memory cell."$/;"	l
-peek_cmd_ex	src/constants.asm	/^	peek_cmd_ex:		.asciz	"ex. peek 1b2c"$/;"	l
-poke_cmd	src/constants.asm	/^	poke_cmd:			.asciz	"poke"$/;"	l
-poke_cmd_descr	src/constants.asm	/^	poke_cmd_descr:		.asciz	"modify a single memory cell."$/;"	l
-poke_cmd_ex	src/constants.asm	/^	poke_cmd_ex:		.asciz	"ex. poke 1b2c 55"$/;"	l
+peek_cmd_descr	src/cmd_dispatch.asm	/^	peek_cmd_descr:		.asciz	"examines memory ( iram, rom, xram, sfr )."$/;"	l
+phm_loop	src/conio.asm	/^phm_loop:$/;"	l
+poke_cmd_descr	src/cmd_dispatch.asm	/^	poke_cmd_descr:		.asciz	"modifies memory ( iram, xram, sfr )."$/;"	l
 print_dump_header	src/commands.asm	/^print_dump_header:$/;"	l
 print_dump_header_loop	src/commands.asm	/^print_dump_header_loop:$/;"	l
+print_hex_byte	src/conio.asm	/^print_hex_byte:$/;"	l
+print_hex_mem	src/conio.asm	/^print_hex_mem:$/;"	l
+print_hex_word	src/conio.asm	/^print_hex_word:$/;"	l
 print_logo	src/logo.asm	/^print_logo:$/;"	l
 print_sfr_table	src/sfr.asm	/^print_sfr_table:$/;"	l
 print_sfr_table_exit	src/sfr.asm	/^print_sfr_table_exit:$/;"	l
@@ -265,15 +269,15 @@ rand	src/math.asm	/^rand:$/;"	l
 rand_init	src/math.asm	/^rand_init:$/;"	l
 rand_seed	src/math.asm	/^rand_seed:		.ds		0x02$/;"	l
 read_sfr	src/sfr.asm	/^read_sfr:$/;"	l
-reset_cmd	src/constants.asm	/^	reset_cmd:			.asciz	"reset"$/;"	l
-reset_cmd_descr	src/constants.asm	/^	reset_cmd_descr:	.asciz	"perform a soft-reset of the system."$/;"	l
+reset_cmd_descr	src/cmd_dispatch.asm	/^	reset_cmd_descr:	.asciz	"perform a soft-reset of the system."$/;"	l
 return_uart_rx_buffer	src/uart.asm	/^return_uart_rx_buffer:$/;"	l
+rom_str	src/constants.asm	/^rom_str:	.asciz		"rom"$/;"	l
 row_data_loop	src/commands.asm	/^row_data_loop:$/;"	l
 sbuf_sfr	src/sfr.asm	/^sbuf_sfr:	.asciz	"SBUF"$/;"	l
 scon_sfr	src/sfr.asm	/^scon_sfr:	.asciz	"SCON"$/;"	l
 ser_isr	src/g51.asm	/^ser_isr:$/;"	l
-sfr_cmd	src/constants.asm	/^	sfr_cmd:			.asciz	"sfr"$/;"	l
-sfr_cmd_descr	src/constants.asm	/^	sfr_cmd_descr:		.asciz	"displays the special function registers."$/;"	l
+sfr_cmd_descr	src/cmd_dispatch.asm	/^	sfr_cmd_descr:		.asciz	"displays the special function registers."$/;"	l
+sfr_str	src/constants.asm	/^sfr_str:	.asciz		"sfr"$/;"	l
 sfr_table	src/sfr.asm	/^sfr_table:$/;"	l
 sp_sfr	src/sfr.asm	/^sp_sfr: 	.asciz	"SP"$/;"	l
 strcmp	src/string.asm	/^strcmp:$/;"	l
@@ -296,6 +300,7 @@ sys_rand	src/bios.asm	/^sys_rand:		ljmp rand$/;"	l
 sys_reset	src/bios.asm	/^sys_reset:$/;"	l
 sys_serial_isr	src/bios.asm	/^sys_serial_isr:	ljmp uart_rx_isr$/;"	l
 tcon_sfr	src/sfr.asm	/^tcon_sfr:	.asciz	"TCON"$/;"	l
+test_cmd_descr	src/cmd_dispatch.asm	/^	test_cmd_descr:		.asciz	"test a function."$/;"	l
 tf0_isr	src/g51.asm	/^tf0_isr:$/;"	l
 tf1_isr	src/g51.asm	/^tf1_isr:$/;"	l
 th0_sfr	src/sfr.asm	/^th0_sfr:	.asciz	"TH0"$/;"	l
@@ -338,6 +343,5 @@ vt102_handle_BS	src/vt102.asm	/^vt102_handle_BS:$/;"	l
 vt102_line_to	src/vt102.asm	/^vt102_line_to:$/;"	l
 vt102_send_bs	src/vt102.asm	/^vt102_send_bs:$/;"	l
 vt102_send_spc	src/vt102.asm	/^vt102_send_spc:$/;"	l
-write_cmd	src/constants.asm	/^	write_cmd:			.asciz	"write"$/;"	l
-write_cmd_descr	src/constants.asm	/^	write_cmd_descr:	.asciz	"modify an sfr register,"$/;"	l
-write_cmd_ex	src/constants.asm	/^	write_cmd_ex:		.asciz	"ex. write p1 55"$/;"	l
+write_cmd_descr	src/cmd_dispatch.asm	/^	write_cmd_descr:	.asciz	"modify an sfr register."$/;"	l
+xram_str	src/constants.asm	/^xram_str:	.asciz		"xram"$/;"	l
