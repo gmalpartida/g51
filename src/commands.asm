@@ -303,85 +303,6 @@ do_poke_exit:
 	cjne r0, #0x01, do_poke_invalid
 	ret
 
-do_dump:
-	lcall println
-	mov dptr, #hex_word
-	lcall cmd_line_parser_next_token
-	mov dptr, #cmd_line_input_temp
-	lcall cmd_line_parser_next_token
-	xch a, b
-	jnz do_dump_err
-	mov dptr, #hex_word
-	lcall ahex2word								; address in b:a
-
-	mov dph, b
-	mov dpl, a
-
-	lcall printtab
-	lcall print_dump_header
-	lcall println
-	
-	mov r1, #0x10
-do_dump_loop:
-	; print row address
-	mov a, dph
-	lcall hex2ahex
-
-	xch a, b
-	lcall sys_putc
-	xch a, b
-	lcall sys_putc
-
-	mov a, dpl
-	lcall hex2ahex
-	xch a, b
-	lcall sys_putc
-	xch a, b
-	lcall sys_putc
-	lcall printspc
-	lcall printspc
-	lcall printspc
-	lcall printspc
-	
-	mov r0, #0x10
-row_data_loop:
-	movx a, @dptr
-	lcall hex2ahex
-	xch a, b
-	lcall sys_putc
-	xch a, b
-	lcall sys_putc
-	lcall printspc
-	lcall printspc
-	inc dptr
-	djnz r0, row_data_loop
-	lcall println
-	djnz r1, do_dump_loop
-	sjmp do_dump_exit
-do_dump_err:
-	lcall do_invalid
-do_dump_exit:
-	ret
-
-print_dump_header:
-	mov r4, #0xff
-	mov r3, #0x10
-print_dump_header_loop:
-	inc r4
-	mov a, #'0'
-	lcall sys_putc
-	mov a, r4
-	anl a, #0x0f
-	lcall nibble2ahex
-	lcall sys_putc
-	mov a, #' '
-	lcall sys_putc
-	mov a, #' '
-	lcall sys_putc
-	djnz r3, print_dump_header_loop
-
-	ret
-
 ; fills a memory block with a specific byte
 do_fill:
 	lcall println
@@ -508,7 +429,8 @@ do_iram:
 
 	mov r7, #0x01
 	lcall printtab
-	lcall print_dump_header
+	mov a, #0x10
+	lcall do_print_header_block
 	lcall println
 	mov r7, #0x08				; how many rows
 	mov r0, #0x00				; starting address

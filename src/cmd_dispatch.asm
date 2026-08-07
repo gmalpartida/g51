@@ -184,11 +184,6 @@ cmd_dispatch_table:
 	.dw			clear_cmd_descr
 	.dw			do_clear
 
-	.db			#0x05
-	.dw			cmd_dump
-	.dw			dump_cmd_descr
-	.dw			do_dump
-
 	.db			#0x06
 	.dw			cmd_load
 	.dw			load_cmd_descr
@@ -213,16 +208,6 @@ cmd_dispatch_table:
 	.dw			cmd_goto
 	.dw			goto_cmd_descr
 	.dw			do_goto
-
-	.db			#0x0b
-	.dw			cmd_iram
-	.dw			iram_cmd_descr
-	.dw			do_iram
-	
-	.db			#0x0c
-	.dw			cmd_sfr
-	.dw			sfr_cmd_descr
-	.dw			do_sfr
 
 	.db			#0x0d
 	.dw			cmd_write

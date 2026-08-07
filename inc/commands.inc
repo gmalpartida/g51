@@ -8,8 +8,6 @@
 
 .globl do_poke
 
-.globl do_dump
-
 .globl do_clear
 
 ; fills a memory block with a specific byte
@@ -20,10 +18,6 @@
 ; jumps to a memory address in program memory
 ; --> r6, r7: memmory address in program memory
 .globl do_goto
-
-.globl do_iram
-
-.globl do_sfr
 
 .globl do_write
 

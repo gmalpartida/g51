@@ -54,10 +54,13 @@ cmd_prompt:
 
 	mov dptr, #cmd
 	lcall cmd_line_parser_next_token
+	xch a, b
+	jz cmd_prompt_next_loop
 
 	mov dptr, #cmd
 	lcall cmd_dispatch_exec
 
+cmd_prompt_next_loop:
 	lcall println
 
 	sjmp cmd_prompt
