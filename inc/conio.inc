@@ -10,4 +10,3 @@
 
 .globl print_hex_word
 
-.globl print_hex_mem

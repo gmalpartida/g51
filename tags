@@ -98,8 +98,8 @@ cmd_load	src/cmd_dispatch.asm	/^cmd_load:		.asciz			"load"$/;"	l
 cmd_ls	src/cmd_dispatch.asm	/^cmd_ls:		.asciz			"ls"$/;"	l
 cmd_peek	src/cmd_dispatch.asm	/^cmd_peek:		.asciz			"peek"$/;"	l
 cmd_poke	src/cmd_dispatch.asm	/^cmd_poke:		.asciz			"poke"$/;"	l
-cmd_promp_next_loop	src/g51.asm	/^cmd_promp_next_loop:$/;"	l
 cmd_prompt	src/g51.asm	/^cmd_prompt:$/;"	l
+cmd_prompt_next_loop	src/g51.asm	/^cmd_prompt_next_loop:$/;"	l
 cmd_reset	src/cmd_dispatch.asm	/^cmd_reset:		.asciz			"reset"$/;"	l
 cmd_sfr	src/cmd_dispatch.asm	/^cmd_sfr:		.asciz			"sfr"$/;"	l
 cmd_test_goto	src/cmd_dispatch.asm	/^cmd_test_goto:	.asciz			"test_goto"$/;"	l
@@ -244,10 +244,9 @@ p2_sfr	src/sfr.asm	/^p2_sfr:		.asciz	"P2"$/;"	l
 p3_sfr	src/sfr.asm	/^p3_sfr:		.asciz	"P3"$/;"	l
 pcon_sfr	src/sfr.asm	/^pcon_sfr:	.asciz	"PCON"$/;"	l
 peek_cmd_descr	src/cmd_dispatch.asm	/^	peek_cmd_descr:		.asciz	"examines memory ( iram, rom, xram, sfr )."$/;"	l
-phm_loop	src/conio.asm	/^phm_loop:$/;"	l
 poke_cmd_descr	src/cmd_dispatch.asm	/^	poke_cmd_descr:		.asciz	"modifies memory ( iram, xram, sfr )."$/;"	l
 print_hex_byte	src/conio.asm	/^print_hex_byte:$/;"	l
-print_hex_mem	src/conio.asm	/^print_hex_mem:$/;"	l
+print_hex_nibble	src/conio.asm	/^print_hex_nibble:$/;"	l
 print_hex_word	src/conio.asm	/^print_hex_word:$/;"	l
 print_logo	src/logo.asm	/^print_logo:$/;"	l
 print_sfr_table	src/sfr.asm	/^print_sfr_table:$/;"	l
@@ -264,6 +263,7 @@ pwm_app_name	src/constants.asm	/^pwm_app_name:$/;"	l
 rand	src/math.asm	/^rand:$/;"	l
 rand_init	src/math.asm	/^rand_init:$/;"	l
 rand_seed	src/math.asm	/^rand_seed:		.ds		0x02$/;"	l
+read_hex_nibble	src/conio.asm	/^read_hex_nibble:$/;"	l
 read_sfr	src/sfr.asm	/^read_sfr:$/;"	l
 reset_cmd_descr	src/cmd_dispatch.asm	/^	reset_cmd_descr:	.asciz	"perform a soft-reset of the system."$/;"	l
 return_uart_rx_buffer	src/uart.asm	/^return_uart_rx_buffer:$/;"	l

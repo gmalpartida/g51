@@ -24,6 +24,11 @@ printspc:
 	lcall sys_putc
 	ret
 
+print_hex_nibble:
+	lcall nibble2ahex
+	lcall sys_putc
+	ret
+
 print_hex_byte:
 	lcall byte2ahex
 	xch a, b							; print high nibble first
@@ -40,19 +45,6 @@ print_hex_word:
 	lcall print_hex_byte				; print low byte
 	ret
 
-print_hex_mem:
-	mov r0, a	
-	mov r1, dpl
-	mov r2, dph
-phm_loop:
+read_hex_nibble:
 	
-	movx a, @dptr
-	lcall print_hex_byte
-	lcall printspc
-	djnz r0, phm_loop
-
-	mov dpl, r1
-	mov dph, r2
 	ret
-
-
