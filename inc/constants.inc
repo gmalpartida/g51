@@ -1,3 +1,6 @@
+.ifndef CONSTANTS_INC
+.define CONSTANTS_INC
+
 TAB			.equ		0x09
 NULL 		.equ		0x00 
 BS 			.equ		0x08
@@ -16,3 +19,5 @@ DEL			.equ		0x7f
 .globl rom_str
 .globl xram_str
 .globl sfr_str
+
+.endif

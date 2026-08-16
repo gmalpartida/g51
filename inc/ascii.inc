@@ -1,3 +1,6 @@
+.ifndef ASCII_INC
+.define ASCII_INC
+
 ; Function: asc2bin
 ; Input:  Accumulator (A) = ASCII character ('0'-'9', 'A'-'F')
 ; Output: Accumulator (A) = Binary value (00h-0Fh)
@@ -22,3 +25,5 @@
 .globl ahex2byte
 
 .globl ahex2word
+
+.endif

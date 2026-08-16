@@ -1,3 +1,6 @@
+.ifndef CONIO_INC
+.define CONIO_INC
+
 .globl println
 
 ; prints tab
@@ -10,3 +13,4 @@
 
 .globl print_hex_word
 
+.endif

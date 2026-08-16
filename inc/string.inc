@@ -1,3 +1,6 @@
+.ifndef STRING_INC
+.define STRING_INC
+
 ; finds character c in the first n bytes of a memory buffer in program memory
 ; --> r6,r7: address of memory buffer
 ; --> r5: 	character for which to search
@@ -45,3 +48,4 @@
 
 .globl strcmp
 
+.endif

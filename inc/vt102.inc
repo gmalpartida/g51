@@ -1,3 +1,5 @@
+.ifndef VT102_INC
+.define VT102_INC
 
 VT102_ESC			.equ		0x1b
 
@@ -13,3 +15,5 @@ VT102_ESC			.equ		0x1b
 .globl vt102_send_spc
 
 .globl vt102_handle_BS
+
+.endif

@@ -1,3 +1,6 @@
+.ifndef BIOS_INC
+.define BIOS_INC
+
 .globl sys_putc
 .globl sys_getc
 .globl sys_puts
@@ -8,3 +11,5 @@
 .globl sys_clrscrn
 .globl sys_reset
 .globl sys_rand
+
+.endif

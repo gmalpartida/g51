@@ -1,4 +1,5 @@
-.include "constants.inc"
+.ifndef COMMANDS_INC
+.define COMMANDS_INC
 
 .globl do_help
 
@@ -26,3 +27,5 @@
 .globl do_reset
 
 .globl do_test
+
+.endif

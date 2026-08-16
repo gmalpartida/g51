@@ -1,3 +1,6 @@
+.ifndef UART_INC
+.define UART_INC
+
 .globl uart_init
 
 ; receives a character via serial line
@@ -27,3 +30,5 @@
 .globl uart_rx_buffer_size
 
 .globl uart_tx_asciz_xram
+
+.endif

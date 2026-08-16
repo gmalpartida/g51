@@ -4,6 +4,7 @@
 .include "bios.inc"
 .include "conio.inc"
 .include "ascii.inc"
+.include "constants.inc"
 
 .area CSEG (CODE)
 
