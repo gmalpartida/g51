@@ -20,7 +20,7 @@ printtab:
 
 ; prints space(s)
 printspc:
-	mov a, #' '
+	mov a, #SPC
 	lcall sys_putc
 	ret
 
