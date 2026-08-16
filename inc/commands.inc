@@ -19,14 +19,10 @@
 ; --> r6, r7: memmory address in program memory
 .globl do_goto
 
-.globl do_write
-
 .globl do_invalid
 
 .globl do_load
 
 .globl do_reset
 
-.globl do_test_goto
-
-.globl do_test_rand
+.globl do_test

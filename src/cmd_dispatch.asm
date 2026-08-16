@@ -82,6 +82,9 @@ cmd_dispatch_find_exit:
 	ret
 
 cmd_dispatch_print_table:
+	mov dptr, #cmd_dispatch_table_header
+	lcall sys_puts
+	lcall println
 	mov dptr, #cmd_dispatch_table
 cdpt_loop:
 	clr a
@@ -110,12 +113,27 @@ cdpt_continue:
 	mov dpl, a
 	
 	lcall sys_puts
-	lcall println
+
+	lcall printtab
 	pop dph
 	pop dpl
 
 	inc dptr
+	clr a
+	movc a, @a + dptr
+	xch a, b
 	inc dptr
+	clr a
+	movc a, @a + dptr
+	push dpl
+	push dph
+	mov dph, b
+	mov dpl, a
+	lcall sys_puts
+	lcall println
+	pop dph
+	pop dpl
+
 	inc dptr
 	inc dptr
 	inc dptr
@@ -138,9 +156,7 @@ cmd_copy:		.asciz			"copy"
 cmd_goto:		.asciz			"goto"
 cmd_iram:		.asciz			"iram"
 cmd_sfr:		.asciz			"sfr"
-cmd_write:		.asciz			"write"
-cmd_test_rand:	.asciz			"test_rand"
-cmd_test_goto:	.asciz			"test_goto"
+cmd_test:		.asciz			"test"
 
 	help_cmd_descr:		.asciz	"displays list of available commands."
 	ls_cmd_descr:		.asciz	"displays available applications."
@@ -154,9 +170,16 @@ cmd_test_goto:	.asciz			"test_goto"
 	goto_cmd_descr:		.asciz	"jumps to a location in program memory to execute code."
 	iram_cmd_descr:		.asciz	"displays the contents of the internal memory area."
 	sfr_cmd_descr:		.asciz	"displays the special function registers."
-	write_cmd_descr:	.asciz	"modify an sfr register."
 	load_cmd_descr:		.asciz	"loads a hex file into xram."
 	test_cmd_descr:		.asciz	"test a function."
+
+cmd_dispatch_table_header:
+	.ascii		"ID"
+	.db			#TAB
+	.ascii		"CMD"
+	.db			#TAB
+	.ascii		"DESCR"
+	.db			#NULL
 
 cmd_dispatch_table:
 	.db			#0x00
@@ -209,15 +232,10 @@ cmd_dispatch_table:
 	.dw			goto_cmd_descr
 	.dw			do_goto
 
-	.db			#0x0d
-	.dw			cmd_write
-	.dw			write_cmd_descr
-	.dw			do_write
-
-	.db			#0x0e
-	.dw			cmd_test_rand
+	.db			#0x0b
+	.dw			cmd_test
 	.dw			test_cmd_descr
-	.dw			do_test_rand
+	.dw			do_test
 
 	.db			#0xff
 	.dw			#0x00

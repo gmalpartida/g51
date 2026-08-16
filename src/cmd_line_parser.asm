@@ -26,7 +26,7 @@ clp_next_char:
 	cjne a, #' ', clp_next_token_process	
 	sjmp clp_next_token_exit				; if SPC then exit
 clp_next_token_process:
-	xch a, b
+	xch a, b								; increment length of token
 	inc a
 	xch a, b
 	push dph								; save buffer address
