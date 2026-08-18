@@ -102,3 +102,26 @@ check_alpha:
 ahex2nibble_done:
     ret
 
+valid_ahex:
+	
+valid_ahex_loop:
+	movx a, @dptr
+	jz valid_ahex_exit
+	clr c
+	subb a, #0x30							
+	cjne a, #10, valid_ahex_check_alpha		; i
+valid_ahex_check_alpha:
+	jc valid_ahex_exit
+	clr c
+	orl a, #0b00100000
+	subb a, #0x27
+
+	inc dptr
+	sjmp valid_ahex_loop
+valid_ahex_exit:
+
+	ret
+
+
+
+

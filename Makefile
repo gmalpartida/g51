@@ -11,7 +11,7 @@ HEXDUMP=hexdump
 OBJCOPY=/opt/sdcc/bin/sdobjcopy
 PACKIHX=/opt/sdcc/bin/packihx
 MINIPRO=minipro
-ROM="upd27c256a@dip28"
+ROM="27c256@dip28"
 
 AS_FLAGS=-los -Iinc 
 LD_FLAGS=-imjw -b VECTORS=0x0000 -b CSEG=0x0030 -b XSEG=0x0300 -b XSEG_UART_BUFFER=0x0000 -b XSEG_CMD_LINE_BUFFER=0x0100 -M

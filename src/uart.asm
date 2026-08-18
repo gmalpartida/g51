@@ -83,10 +83,12 @@ uart_rx_char_exit:
 	ret
 
 uart_tx_char:
+	clr es
 	mov sbuf, a
 uart_tx_char_here:
 	jnb ti, uart_tx_char_here
 	clr ti
+	setb es
 	ret
 
 uart_tx_asciz:
